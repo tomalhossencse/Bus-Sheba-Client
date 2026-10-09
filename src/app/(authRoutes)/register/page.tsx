@@ -1,7 +1,10 @@
+import { RegisterForm } from "@/components/form/RegisterForm";
+
+export const metadata = {
+  title: "Register | BusSheba",
+  description: "Create your BusSheba account",
+};
+
 export default function RegisterPage() {
-  return (
-    <div>
-      <h1>This is RegisterPage component</h1>
-    </div>
-  );
+  return <RegisterForm />;
 }

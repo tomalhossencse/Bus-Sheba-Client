@@ -102,11 +102,11 @@ export function LoginForm() {
 
           let dashboardRoute = "/";
           if (userRole === "ADMIN" || userRole === "SUPER_ADMIN") {
-            dashboardRoute = "/admin";
+            dashboardRoute = "/dashboard/admin";
           } else if (userRole === "OPERATOR") {
-            dashboardRoute = "/operator";
+            dashboardRoute = "/dashboard/operator";
           } else if (userRole === "PASSENGER") {
-            dashboardRoute = "/dashboard";
+            dashboardRoute = "/dashboard/passenger";
           }
 
           const redirectTo = searchParams.get("redirectTo") || dashboardRoute;
