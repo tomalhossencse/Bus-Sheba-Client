@@ -63,7 +63,7 @@ export default function RoutesPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {allRoutes.map((route) => (
           <Link
-            key={`${route.origin}-${route.destination}`}
+            key={`${route.origin}-${route.destination}-${route.duration}-${route.price}-${Math.random()}`}
             href={`/search?origin=${route.origin}&destination=${route.destination}`}
             className="group"
           >
