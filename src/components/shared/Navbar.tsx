@@ -18,6 +18,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useState } from "react";
+import { toast } from "sonner";
 import { logout } from "@/api/auth.api";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -54,6 +55,9 @@ export function Navbar() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data: user } = useGetme();
+  const { mutate: logout } = useLogout();
+
+  console.log("Navbar user:", user?.data);
   const profileImage = getProfileImage(user?.image);
 
   const navLinks = [
@@ -72,8 +76,6 @@ export function Navbar() {
         ? "/dashboard/operator"
         : "/dashboard/passenger";
 
-  const { data: logout } = useLogout();
-
   const handleLogout = async () => {
     setLoggingOut(true);
     try {
@@ -82,6 +84,7 @@ export function Navbar() {
       router.replace("/");
       router.refresh();
     } finally {
+      toast.success("You have been logged out successfully.");
       setLoggingOut(false);
     }
   };
