@@ -19,7 +19,6 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useState } from "react";
 import { toast } from "sonner";
-import { logout } from "@/api/auth.api";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -57,8 +56,7 @@ export function Navbar() {
   const { data: user } = useGetme();
   const { mutate: logout } = useLogout();
 
-  console.log("Navbar user:", user?.data);
-  const profileImage = getProfileImage(user?.image);
+  const profileImage = getProfileImage(user?.data?.image);
 
   const navLinks = [
     { label: "Home", href: "/" },
@@ -70,9 +68,9 @@ export function Navbar() {
   ];
 
   const dashboardHref =
-    user?.role === "ADMIN"
+    user?.data?.role === "ADMIN"
       ? "/dashboard/admin"
-      : user?.role === "OPERATOR"
+      : user?.data?.role === "OPERATOR"
         ? "/dashboard/operator"
         : "/dashboard/passenger";
 
@@ -154,7 +152,7 @@ export function Navbar() {
                     <LayoutDashboard /> Dashboard
                   </Link>
                 </DropdownMenuItem>
-                {user.role === "PASSENGER" && (
+                {user.data?.role === "PASSENGER" && (
                   <DropdownMenuItem asChild>
                     <Link href="/dashboard/passenger/bookings">
                       <Ticket /> My bookings
@@ -166,7 +164,7 @@ export function Navbar() {
                     <KeyRound /> Change password
                   </Link>
                 </DropdownMenuItem>
-                {user.role === "PASSENGER" && (
+                {user.data?.role === "PASSENGER" && (
                   <DropdownMenuItem asChild>
                     <Link href="/apply-operator">
                       <BriefcaseBusiness /> Apply as operator
