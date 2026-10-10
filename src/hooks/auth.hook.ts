@@ -45,3 +45,24 @@ export function useVerifyEmailOTP() {
     mutationFn: verifyEmailOTP,
   });
 }
+
+export const queryKeys = {
+  me: ["me"] as const,
+  routes: ["routes"] as const,
+  route: (id: string) => ["route", id] as const,
+  stops: (routeId: string) => ["route", routeId, "stops"] as const,
+  buses: ["buses"] as const,
+  myBuses: ["my-buses"] as const,
+  trips: ["trips"] as const,
+  trip: (id: string) => ["trip", id] as const,
+  tripSeats: (id: string) => ["trip", id, "seats"] as const,
+  myBookings: (status: string) => ["bookings", "my", status] as const,
+  allBookings: ["bookings", "all"] as const,
+  myPayments: ["payments", "my"] as const,
+  operators: ["operators"] as const,
+  analytics: {
+    admin: ["analytics", "admin"] as const,
+    operator: ["analytics", "operator"] as const,
+    passenger: ["analytics", "passenger"] as const,
+  },
+};

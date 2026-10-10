@@ -1,6 +1,6 @@
 import apiClient from "@/lib/apiClient";
 import type { OperatorProfile } from "@/lib/types";
-import type { ApiResponse, VerifyEmailPayload } from "@/types";
+import type { ApiResponse, PaginatedData, VerifyEmailPayload } from "@/types";
 import type { OperatorPayload } from "@/types/operator.type";
 
 export const applyOperator = async (
@@ -38,4 +38,25 @@ export const applyOperator = async (
 
 export const OperatorVerifyEmail = async (payload: VerifyEmailPayload) => {
   return apiClient("/operator/verify-email", { method: "POST", body: payload });
+};
+
+export const getAllOperators = async () => {
+  return apiClient<ApiResponse<PaginatedData<OperatorProfile>>>("/operator", {
+    params: { page: 1, limit: 50 },
+  });
+};
+
+export const approve = async (
+  operatorId: string,
+  verificationStatus: "APPROVED" | "REJECTED",
+  rejectReason?: string,
+): Promise<ApiResponse<OperatorProfile>> => {
+  return apiClient<ApiResponse<OperatorProfile>>("/operator/approve", {
+    method: "PATCH",
+    body: {
+      operatorId,
+      verificationStatus,
+      rejectReason,
+    },
+  });
 };
