@@ -10,10 +10,9 @@ export default function Providers({ children }: { children: ReactNode }) {
       <QueryProvider>
         <ThemeProvider>
           <Toaster
-            position="top-right"
-            duration={3500}
+            position="bottom-right"
+            duration={2000}
             richColors
-            closeButton
             expand
             visibleToasts={4}
             toastOptions={{

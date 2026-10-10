@@ -1,6 +1,7 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
+import { log } from "console";
 import {
   BriefcaseBusiness,
   KeyRound,
@@ -49,12 +50,11 @@ function getProfileImage(image?: string | null) {
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [loggingOut, setLoggingOut] = useState(false);
   const { theme, setTheme } = useTheme();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { data: user } = useGetme();
-  const { mutate: logout } = useLogout();
+  const { data: user, isLoading: userLoading } = useGetme();
+  const { mutate: logout, isPending: logoutPending } = useLogout();
 
   const profileImage = getProfileImage(user?.data?.image);
 
@@ -74,18 +74,28 @@ export function Navbar() {
         ? "/dashboard/operator"
         : "/dashboard/passenger";
 
-  const handleLogout = async () => {
-    setLoggingOut(true);
-    try {
-      await logout();
-      queryClient.clear();
-      router.replace("/");
-      router.refresh();
-    } finally {
-      toast.success("You have been logged out successfully.");
-      setLoggingOut(false);
-    }
+  const handleLogout = () => {
+    logout(undefined, {
+      onSuccess: (result) => {
+        toast.success(result.message || "Logged out successfully");
+        router.push("/login");
+        queryClient.removeQueries({ queryKey: ["user"] });
+      },
+      onError: (error) => {
+        toast.error(error.message || "Logged out failed");
+      },
+    });
   };
+
+  if (userLoading) {
+    return (
+      <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <BrandLogo />
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
@@ -119,7 +129,7 @@ export function Navbar() {
             <span className="sr-only">Toggle theme</span>
           </Button>
 
-          {user ? (
+          {user?.data ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -129,10 +139,10 @@ export function Navbar() {
                 >
                   <Avatar>
                     {profileImage ? (
-                      <AvatarImage src={profileImage} alt={user.name} />
+                      <AvatarImage src={profileImage} alt={user.data.name} />
                     ) : null}
                     <AvatarFallback className="relative z-0">
-                      {getInitials(user.name)}
+                      {getInitials(user.data.name)}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
@@ -140,10 +150,10 @@ export function Navbar() {
               <DropdownMenuContent align="end" className="w-64">
                 <DropdownMenuLabel className="flex flex-col items-start gap-0.5">
                   <span className="max-w-full truncate font-semibold">
-                    {user.name}
+                    {user.data.name}
                   </span>
                   <span className="max-w-full truncate text-xs font-normal text-muted-foreground">
-                    {user.email}
+                    {user.data.email}
                   </span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -172,8 +182,11 @@ export function Navbar() {
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem disabled={loggingOut} onClick={handleLogout}>
-                  <LogOut /> {loggingOut ? "Logging out..." : "Log out"}
+                <DropdownMenuItem
+                  disabled={logoutPending}
+                  onClick={handleLogout}
+                >
+                  <LogOut /> {logoutPending ? "Logging out..." : "Log out"}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -281,11 +294,11 @@ export function Navbar() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    disabled={loggingOut}
+                    disabled={logoutPending}
                     onClick={handleLogout}
                   >
                     <LogOut className="h-4 w-4" />
-                    {loggingOut ? "Logging out..." : "Log out"}
+                    {logoutPending ? "Logging out..." : "Log out"}
                   </Button>
                 </>
               ) : (
