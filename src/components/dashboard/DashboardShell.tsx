@@ -16,7 +16,6 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
   return (
     <div className="flex min-h-screen">
       <DashboardSidebar
-        user={user}
         mobileOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />

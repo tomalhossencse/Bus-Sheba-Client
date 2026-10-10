@@ -1,36 +1,43 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { LogOut, type LucideIcon, Menu, X } from "lucide-react";
+import { LogOut, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { BrandLogo } from "@/components/shared/BrandLogo";
 import { Button } from "@/components/ui/button";
-import { useLogout } from "@/hooks";
-import type { UserProfile } from "@/lib/types";
+import { useGetme, useLogout } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { type NavItem, navsByRole } from "@/routes/sidebarNavs";
 
 interface DashboardSidebarProps {
-  user: UserProfile | undefined;
   mobileOpen: boolean;
   onClose: () => void;
 }
 
 export function DashboardSidebar({
-  user,
   mobileOpen,
   onClose,
 }: DashboardSidebarProps) {
   const pathname = usePathname();
-  const role = user?.role || "PASSENGER";
+  const { data: user } = useGetme();
+
+  const role = user.data?.role || "PASSENGER";
   const navs: NavItem[] =
     navsByRole[role as keyof typeof navsByRole] || navsByRole.PASSENGER;
 
   const { mutate: logout } = useLogout();
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  //     const result = await getMe();
+  //   console.log("DashboardLayout getMe result:", result);
+  //   const user = result?.success ? result.data : null;
+
+  //   if (!user) {
+  //     redirect("/login?reason=session");
+  //   }
 
   return (
     <>
@@ -46,7 +53,7 @@ export function DashboardSidebar({
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r bg-sidebar text-sidebar-foreground transition-transform duration-200 lg:static lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r bg-sidebar text-sidebar-foreground transition-transform duration-200 lg:static lg:translate-x-0 h-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -91,10 +98,10 @@ export function DashboardSidebar({
         <div className="border-t p-3">
           <div className="mb-2 flex items-center gap-3 rounded-md bg-muted/50 p-2">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
-              {user?.name?.charAt(0)?.toUpperCase() || "U"}
+              {user?.data?.name?.charAt(0)?.toUpperCase() || "U"}
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium">{user?.name}</p>
+              <p className="truncate text-sm font-medium">{user?.data?.name}</p>
               <p className="truncate text-xs text-muted-foreground">
                 {user?.role}
               </p>

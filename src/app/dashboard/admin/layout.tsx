@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+import { getMe } from "@/api";
 import RoleGuard from "@/components/auth/role-guard";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 
