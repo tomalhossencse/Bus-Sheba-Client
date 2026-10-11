@@ -1,8 +1,10 @@
 "use client";
 
 import { CalendarX2 } from "lucide-react";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -31,7 +33,9 @@ function statusVariant(status: string) {
 }
 
 export default function AdminTripsPage() {
-  const { data: trips, isLoading } = useAllTrips();
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useAllTrips(page);
+  const trips = data?.data;
 
   return (
     <div className="space-y-6 p-4 sm:p-6 lg:p-8">
@@ -58,8 +62,13 @@ export default function AdminTripsPage() {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                Array.from({ length: 4 }).map((_, i) => (
-                  <TableRow key={`skeleton-loading-${Math.random()}`}>
+                [
+                  "trip-loading-1",
+                  "trip-loading-2",
+                  "trip-loading-3",
+                  "trip-loading-4",
+                ].map((key) => (
+                  <TableRow key={key}>
                     <TableCell colSpan={7}>
                       <Skeleton className="h-10" />
                     </TableCell>
@@ -111,6 +120,19 @@ export default function AdminTripsPage() {
           </Table>
         </CardContent>
       </Card>
+      {data?.meta && data.meta.totalPages > 1 && (
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-xs text-muted-foreground">
+            Showing page {data.meta.page} of {data.meta.totalPages} (
+            {data.meta.total} total trips)
+          </p>
+          <Pagination
+            page={data.meta.page}
+            totalPages={data.meta.totalPages}
+            onPageChange={setPage}
+          />
+        </div>
+      )}
     </div>
   );
 }

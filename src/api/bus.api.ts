@@ -1,10 +1,13 @@
 import apiClient from "@/lib/apiClient";
 import type { IBus } from "@/lib/types";
-import type { ApiResponse, PaginatedData } from "@/types";
+import type { ApiResponse } from "@/types";
 
-export const getAllBuses = async () => {
-  return apiClient<ApiResponse<PaginatedData<IBus>>>("/bus", {
-    params: { page: 1, limit: 50 },
+export const getAllBuses = async (params?: {
+  page?: number;
+  limit?: number;
+}) => {
+  return apiClient<ApiResponse<IBus[]>>("/bus", {
+    params: { page: 1, limit: 10, ...params },
   });
 };
 

@@ -1,6 +1,6 @@
 import apiClient from "@/lib/apiClient";
 import type { IBooking } from "@/lib/types";
-import type { ApiResponse, PaginatedData } from "@/types/api.type";
+import type { ApiResponse } from "@/types/api.type";
 
 export interface CreateBookingPayload {
   tripId: string;
@@ -10,9 +10,12 @@ export interface CreateBookingPayload {
   passengers: Array<{ name: string; phone: string; email: string }>;
 }
 
-export const getAllBookings = async () => {
+export const getAllBookings = async (params?: {
+  page?: number;
+  limit?: number;
+}) => {
   return apiClient<ApiResponse<IBooking[]>>("/booking", {
-    params: { page: 1, limit: 50 },
+    params: { page: 1, limit: 10, ...params },
   });
 };
 

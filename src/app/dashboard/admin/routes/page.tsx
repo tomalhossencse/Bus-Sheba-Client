@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -21,7 +22,9 @@ import { AddRouteDialog } from "./AddRouteDialog";
 import { EditRouteDialog } from "./EditRouteDialog";
 
 export default function AdminRoutesPage() {
-  const { data: routes, isLoading } = useRoutes();
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useRoutes(page);
+  const routes = data?.data;
   const toggleActive = useToggleRouteActive();
   const [addOpen, setAddOpen] = useState(false);
   const [editing, setEditing] = useState<IRoute | null>(null);
@@ -182,6 +185,13 @@ export default function AdminRoutesPage() {
           );
         })}
       </Tabs>
+      {data?.meta && (
+        <Pagination
+          page={data.meta.page}
+          totalPages={data.meta.totalPages}
+          onPageChange={setPage}
+        />
+      )}
     </div>
   );
 }

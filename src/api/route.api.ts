@@ -36,7 +36,7 @@ export const getAllRoutes = async (params?: {
   limit?: number;
 }) => {
   return apiClient<ApiResponse<PaginatedData<IRoute>>>("/route", {
-    params: { page: 1, limit: 50, ...params },
+    params: { page: 1, limit: 10, ...params },
   });
 };
 

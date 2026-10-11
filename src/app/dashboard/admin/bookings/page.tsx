@@ -1,8 +1,10 @@
 "use client";
 
 import { Ticket } from "lucide-react";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -32,7 +34,9 @@ function statusVariant(status: string) {
 }
 
 export default function AdminBookingsPage() {
-  const { data: bookings, isLoading } = useAllBookings();
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useAllBookings(page);
+  const bookings = data?.data;
 
   return (
     <div className="space-y-6 p-4 sm:p-6 lg:p-8">
@@ -111,6 +115,13 @@ export default function AdminBookingsPage() {
           </Table>
         </CardContent>
       </Card>
+      {data?.meta && (
+        <Pagination
+          page={data.meta.page}
+          totalPages={data.meta.totalPages}
+          onPageChange={setPage}
+        />
+      )}
     </div>
   );
 }

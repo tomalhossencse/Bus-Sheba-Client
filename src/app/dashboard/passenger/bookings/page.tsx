@@ -13,6 +13,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCreatePayment, useMyBookings } from "@/hooks";
@@ -44,10 +45,13 @@ function statusVariant(status: string) {
 export default function PassengerBookingsPage() {
   const searchParams = useSearchParams();
   const [filter, setFilter] = useState<Filter>("all");
+  const [page, setPage] = useState(1);
   const [payingBookingId, setPayingBookingId] = useState<string | null>(null);
-  const { data: bookings, isLoading } = useMyBookings(
+  const { data, isLoading } = useMyBookings(
     filter === "all" ? undefined : filter,
+    page,
   );
+  const bookings = data?.data;
   const createPayment = useCreatePayment();
   const status = searchParams.get("status");
   const highlightedBookingId = searchParams.get("bookingId");
@@ -65,6 +69,11 @@ export default function PassengerBookingsPage() {
     } finally {
       setPayingBookingId(null);
     }
+  };
+
+  const handleFilterChange = (value: string) => {
+    setFilter(value as Filter);
+    setPage(1);
   };
 
   return (
@@ -152,7 +161,7 @@ export default function PassengerBookingsPage() {
         </Card>
       )}
 
-      <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)}>
+      <Tabs value={filter} onValueChange={handleFilterChange}>
         <TabsList>
           {FILTERS.map((f) => (
             <TabsTrigger key={f} value={f}>
@@ -240,6 +249,14 @@ export default function PassengerBookingsPage() {
           </div>
         )}
       </div>
+
+      {data?.meta && data.meta.totalPages > 1 && (
+        <Pagination
+          page={data.meta.page}
+          totalPages={data.meta.totalPages}
+          onPageChange={setPage}
+        />
+      )}
     </div>
   );
 }

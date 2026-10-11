@@ -2,9 +2,11 @@
 
 import { ClipboardList } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -33,7 +35,9 @@ function statusVariant(status: string) {
 }
 
 export default function OperatorBookingsPage() {
-  const { data: trips, isLoading } = useMyTrips();
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useMyTrips({ page });
+  const trips = data?.data;
 
   const totalBookings =
     trips?.reduce((sum, t) => sum + (t._count?.bookings || 0), 0) || 0;
@@ -122,6 +126,13 @@ export default function OperatorBookingsPage() {
           </Table>
         </CardContent>
       </Card>
+      {data?.meta && (
+        <Pagination
+          page={data.meta.page}
+          totalPages={data.meta.totalPages}
+          onPageChange={setPage}
+        />
+      )}
     </div>
   );
 }

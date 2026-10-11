@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -28,7 +29,8 @@ import { useApproveOperator, useGetAllOperators } from "@/hooks";
 import { formatDateTime } from "@/utils";
 
 export default function AdminOperatorsPage() {
-  const { data: operators, isLoading } = useGetAllOperators();
+  const [page, setPage] = useState(1);
+  const { data: operators, isLoading } = useGetAllOperators(page);
 
   const { mutate: approveOperator, isPending } = useApproveOperator();
   const [rejectingOperator, setRejectingOperator] = useState<{
@@ -101,8 +103,8 @@ export default function AdminOperatorsPage() {
                     </TableCell>
                   </TableRow>
                 ))
-              ) : operators?.data?.data?.length ? (
-                operators?.data.data?.map((op) => (
+              ) : operators?.data?.length ? (
+                operators.data.map((op) => (
                   <TableRow key={op.id}>
                     <TableCell>
                       <p className="font-medium">{op.companyName}</p>
@@ -218,6 +220,13 @@ export default function AdminOperatorsPage() {
           </Table>
         </CardContent>
       </Card>
+      {operators?.meta && (
+        <Pagination
+          page={operators.meta.page}
+          totalPages={operators.meta.totalPages}
+          onPageChange={setPage}
+        />
+      )}
 
       <Dialog
         open={Boolean(rejectingOperator)}

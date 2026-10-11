@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { createRoute, getAllRoutes, setActiveRoute, updateRoute } from "@/api";
 import { extractApiError } from "@/lib/api";
 import type { IRoute } from "@/lib/types";
+import type { PaginatedData } from "@/types";
 import { queryKeys } from "./auth.hook";
 
 export const useCreateRoute = () => {
@@ -25,11 +26,20 @@ export const useUpdateRoute = () => {
       updateRoute(id, payload),
     onMutate: async ({ id, payload }) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.routes });
-      const previous = queryClient.getQueryData<IRoute[]>(queryKeys.routes);
-      queryClient.setQueryData<IRoute[]>(queryKeys.routes, (routes) =>
-        routes?.map((route) =>
-          route.id === id ? { ...route, ...payload } : route,
-        ),
+      const previous = queryClient.getQueriesData<PaginatedData<IRoute>>({
+        queryKey: queryKeys.routes,
+      });
+      queryClient.setQueriesData<PaginatedData<IRoute>>(
+        { queryKey: queryKeys.routes },
+        (routes) =>
+          routes
+            ? {
+                ...routes,
+                data: routes.data.map((route) =>
+                  route.id === id ? { ...route, ...payload } : route,
+                ),
+              }
+            : routes,
       );
       return { previous };
     },
@@ -37,8 +47,9 @@ export const useUpdateRoute = () => {
       toast.success(result.message || "Route updated");
     },
     onError: (error: unknown, _variables, context) => {
-      if (context?.previous)
-        queryClient.setQueryData(queryKeys.routes, context.previous);
+      context?.previous?.forEach(([key, data]) => {
+        queryClient.setQueryData(key, data);
+      });
       toast.error(extractApiError(error) || "Failed to update route");
     },
     onSettled: () =>
@@ -46,12 +57,12 @@ export const useUpdateRoute = () => {
   });
 };
 
-export const useRoutes = () => {
+export const useRoutes = (page = 1, limit = 10, searchTerm?: string) => {
   return useQuery({
-    queryKey: queryKeys.routes,
+    queryKey: [...queryKeys.routes, page, limit, searchTerm],
     queryFn: async () => {
-      const result = await getAllRoutes();
-      return result.data.data;
+      const result = await getAllRoutes({ page, limit, searchTerm });
+      return result.data;
     },
   });
 };
@@ -63,11 +74,20 @@ export const useToggleRouteActive = () => {
       setActiveRoute(id, active),
     onMutate: async ({ id, active }) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.routes });
-      const previous = queryClient.getQueryData<IRoute[]>(queryKeys.routes);
-      queryClient.setQueryData<IRoute[]>(queryKeys.routes, (routes) =>
-        routes?.map((route) =>
-          route.id === id ? { ...route, isActive: active } : route,
-        ),
+      const previous = queryClient.getQueriesData<PaginatedData<IRoute>>({
+        queryKey: queryKeys.routes,
+      });
+      queryClient.setQueriesData<PaginatedData<IRoute>>(
+        { queryKey: queryKeys.routes },
+        (routes) =>
+          routes
+            ? {
+                ...routes,
+                data: routes.data.map((route) =>
+                  route.id === id ? { ...route, isActive: active } : route,
+                ),
+              }
+            : routes,
       );
       return { previous };
     },
@@ -75,8 +95,9 @@ export const useToggleRouteActive = () => {
       toast.success(result.message || "Route updated");
     },
     onError: (error: unknown, _variables, context) => {
-      if (context?.previous)
-        queryClient.setQueryData(queryKeys.routes, context.previous);
+      context?.previous?.forEach(([key, data]) => {
+        queryClient.setQueryData(key, data);
+      });
       toast.error(extractApiError(error) || "Failed to toggle route");
     },
     onSettled: () =>

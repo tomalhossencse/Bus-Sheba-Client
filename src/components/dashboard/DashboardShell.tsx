@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useGetme } from "@/hooks";
-import type { UserProfile } from "@/lib/types";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { DashboardTopbar } from "./DashboardTopbar";
 
@@ -21,7 +20,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
         mobileOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col lg:pl-64">
         <DashboardTopbar user={user} onMenuClick={() => setSidebarOpen(true)} />
         <main className="flex-1 bg-muted/20">{children}</main>
       </div>

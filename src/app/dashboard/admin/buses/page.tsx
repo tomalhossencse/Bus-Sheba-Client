@@ -1,9 +1,10 @@
 "use client";
 
 import { Bus } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -27,10 +28,12 @@ function typeBadge(type: BusType) {
 }
 
 export default function AdminBusesPage() {
-  const { data: buses, isLoading } = useBuses();
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useBuses(page);
+  const buses = data?.data;
   const skeletonKeys = useMemo(
     () => Array.from({ length: 4 }, () => crypto.randomUUID()),
-    []
+    [],
   );
 
   return (
@@ -119,6 +122,19 @@ export default function AdminBusesPage() {
           </Table>
         </CardContent>
       </Card>
+      {data?.meta && data.meta.totalPages > 1 && (
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-xs text-muted-foreground">
+            Showing page {data.meta.page} of {data.meta.totalPages} (
+            {data.meta.total} total buses)
+          </p>
+          <Pagination
+            page={data.meta.page}
+            totalPages={data.meta.totalPages}
+            onPageChange={setPage}
+          />
+        </div>
+      )}
     </div>
   );
 }

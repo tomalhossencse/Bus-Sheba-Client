@@ -7,14 +7,15 @@ import {
   getMyBookings,
 } from "@/api/booking.api";
 import { extractApiError } from "@/lib/api";
+import { toPaginatedResult } from "@/lib/pagination";
 import { queryKeys } from "./auth.hook";
 
-export const useAllBookings = () => {
+export const useAllBookings = (page = 1, limit = 10) => {
   return useQuery({
-    queryKey: queryKeys.allBookings,
+    queryKey: [...queryKeys.allBookings, page, limit],
     queryFn: async () => {
-      const result = await getAllBookings();
-      return result.data;
+      const result = await getAllBookings({ page, limit });
+      return toPaginatedResult(result.data, result.meta, limit);
     },
   });
 };
@@ -32,12 +33,12 @@ export const useCreateBooking = () => {
   });
 };
 
-export const useMyBookings = (status?: string) => {
+export const useMyBookings = (status?: string, page = 1, limit = 10) => {
   return useQuery({
-    queryKey: queryKeys.myBookings(status || "all"),
+    queryKey: [...queryKeys.myBookings(status || "all"), page, limit],
     queryFn: async () => {
-      const result = await getMyBookings(status ? { status } : {});
-      return result.data;
+      const result = await getMyBookings({ status, page, limit });
+      return toPaginatedResult(result.data, result.meta, limit);
     },
   });
 };

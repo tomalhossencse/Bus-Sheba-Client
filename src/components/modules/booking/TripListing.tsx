@@ -76,7 +76,11 @@ export function TripListing() {
     isLoading,
     isError,
     error,
-  } = useTripsSearch({ source: origin, destination, date });
+  } = useTripsSearch({
+    source: origin,
+    destination,
+    travelDate: date,
+  });
 
   const handleSearch = (data: TripSearchForm) => {
     const params = new URLSearchParams();
@@ -91,16 +95,11 @@ export function TripListing() {
     setValue("destination", origin, { shouldValidate: true });
   };
 
-  const getTypeBadge = (
-    type: BusType,
-  ): "default" | "secondary" | "success" | "outline" => {
-    const variants: Record<
-      BusType,
-      "default" | "secondary" | "success" | "outline"
-    > = {
+  const getTypeBadge = (type: BusType): "default" | "secondary" | "outline" => {
+    const variants: Record<BusType, "default" | "secondary" | "outline"> = {
       AC: "default",
       NON_AC: "secondary",
-      SLEEPER: "success",
+      SLEEPER: "default",
       SEMI_SLEEPER: "outline",
     };
     return variants[type] || "default";
@@ -231,8 +230,7 @@ export function TripListing() {
       {isError && (
         <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-8 text-center">
           <p className="text-destructive">
-            Failed to load trips:{" "}
-            {extractApiError(error)}
+            Failed to load trips: {extractApiError(error)}
           </p>
         </div>
       )}

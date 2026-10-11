@@ -41,9 +41,8 @@ export function Navbar() {
     { label: "Home", href: "/" },
     { label: "Routes", href: "/routes" },
     { label: "Search", href: "/search" },
-    { label: "Scan Ticket", href: "/tickets/scan" },
     { label: "Become an Operator", href: "/apply-operator" },
-    { label: "Contact", href: "/contact" },
+    { label: "Scan Ticket", href: "/tickets/scan" },
   ];
 
   const dashboardHref =

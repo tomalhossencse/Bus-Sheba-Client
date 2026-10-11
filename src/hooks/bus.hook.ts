@@ -1,17 +1,25 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { toast } from "sonner";
 import { createBus, getAllBuses, getMyBuses, setBusStatus } from "@/api";
 import { extractApiError } from "@/lib/api";
+import { toPaginatedResult } from "@/lib/pagination";
 import type { IBus } from "@/lib/types";
+import type { PaginatedResult } from "@/types";
 import { queryKeys } from "./auth.hook";
 
-export const useBuses = () => {
+export const useBuses = (page = 1, limit = 10) => {
   return useQuery({
-    queryKey: queryKeys.buses,
+    queryKey: [...queryKeys.buses, page, limit],
     queryFn: async () => {
-      const result = await getAllBuses();
-      return result.data.data;
+      const result = await getAllBuses({ page, limit });
+      return toPaginatedResult(result.data, result.meta, limit);
     },
+    placeholderData: keepPreviousData,
   });
 };
 
@@ -20,7 +28,7 @@ export const useMyBuses = () => {
     queryKey: queryKeys.myBuses,
     queryFn: async () => {
       const result = await getMyBuses();
-      return result.data;
+      return toPaginatedResult(result.data, result.meta, result.data.length);
     },
   });
 };
@@ -45,9 +53,20 @@ export const useUpdateBusStatus = () => {
       setBusStatus(id, status),
     onMutate: async ({ id, status }) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.myBuses });
-      const previous = queryClient.getQueryData<IBus[]>(queryKeys.myBuses);
-      queryClient.setQueryData<IBus[]>(queryKeys.myBuses, (buses) =>
-        buses?.map((bus) => (bus.id === id ? { ...bus, status } : bus)),
+      const previous = queryClient.getQueriesData<PaginatedResult<IBus>>({
+        queryKey: queryKeys.myBuses,
+      });
+      queryClient.setQueriesData<PaginatedResult<IBus>>(
+        { queryKey: queryKeys.myBuses },
+        (buses) =>
+          buses
+            ? {
+                ...buses,
+                data: buses.data.map((bus) =>
+                  bus.id === id ? { ...bus, status } : bus,
+                ),
+              }
+            : buses,
       );
       return { previous };
     },
@@ -55,8 +74,9 @@ export const useUpdateBusStatus = () => {
       toast.success(result.message || "Bus updated");
     },
     onError: (error: unknown, _variables, context) => {
-      if (context?.previous)
-        queryClient.setQueryData(queryKeys.myBuses, context.previous);
+      context?.previous?.forEach(([key, data]) => {
+        queryClient.setQueryData(key, data);
+      });
       toast.error(extractApiError(error) || "Failed to update bus");
     },
     onSettled: () =>

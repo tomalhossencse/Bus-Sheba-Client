@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   cancelTrip,
@@ -10,13 +15,14 @@ import {
   search,
 } from "@/api";
 import { extractApiError } from "@/lib/api";
+import { toPaginatedResult } from "@/lib/pagination";
 import type { ITrip } from "@/lib/types";
 import { queryKeys } from "./auth.hook";
 
 export const useTripsSearch = (params: {
   source?: string;
   destination?: string;
-  date?: string;
+  travelDate?: string;
 }) => {
   return useQuery({
     queryKey: ["trip-search", params],
@@ -26,22 +32,28 @@ export const useTripsSearch = (params: {
   });
 };
 
-export const useAllTrips = () => {
+export const useAllTrips = (page = 1, limit = 20, status?: string) => {
   return useQuery({
-    queryKey: ["all-trips"],
+    queryKey: ["all-trips", page, limit, status],
     queryFn: async () => {
-      const result = await getAllTrips();
-      return result.data;
+      const result = await getAllTrips({ page, limit, status });
+      return toPaginatedResult(result.data, result.meta, limit);
     },
   });
 };
 
-export const useMyTrips = (params?: { status?: string }) => {
+export const useMyTrips = (params?: {
+  page?: number;
+  limit?: number;
+  status?: string;
+}) => {
+  const page = params?.page || 1;
+  const limit = params?.limit || 20;
   return useQuery({
-    queryKey: ["my-trips", params?.status],
+    queryKey: ["my-trips", page, limit, params?.status],
     queryFn: async () => {
       const result = await getMyTrips(params);
-      return result.data;
+      return toPaginatedResult(result.data, result.meta, limit);
     },
   });
 };

@@ -2,14 +2,18 @@
 
 import { ArrowRight, Ticket } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMyBookings } from "@/hooks";
 import { formatDate, formatPrice, formatTime } from "@/utils";
 
 export default function PassengerTicketsPage() {
-  const { data: bookings, isLoading } = useMyBookings("CONFIRMED");
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useMyBookings("CONFIRMED", page);
+  const bookings = data?.data;
   const tickets = bookings?.filter((booking) => booking.ticket);
 
   return (
@@ -53,6 +57,13 @@ export default function PassengerTicketsPage() {
                       {formatPrice(booking.totalAmount)}
                     </p>
                   </div>
+                  {data?.meta && (
+                    <Pagination
+                      page={data.meta.page}
+                      totalPages={data.meta.totalPages}
+                      onPageChange={setPage}
+                    />
+                  )}
                 </div>
                 <Button asChild>
                   <Link href={`/dashboard/passenger/tickets/${booking.id}`}>

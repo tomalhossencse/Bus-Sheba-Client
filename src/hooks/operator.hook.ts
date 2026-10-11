@@ -6,8 +6,10 @@ import {
   getAllOperators,
   OperatorVerifyEmail,
 } from "@/api/operator.api";
-import type { OperatorProfile } from "@/lib/types";
 import { extractApiError } from "@/lib/api";
+import { toPaginatedResult } from "@/lib/pagination";
+import type { OperatorProfile } from "@/lib/types";
+import type { PaginatedResult } from "@/types";
 import { queryKeys } from "./auth.hook";
 
 export function useApplyOperator() {
@@ -22,10 +24,13 @@ export function useOperatorVerifyEmail() {
   });
 }
 
-export function useGetAllOperators() {
+export function useGetAllOperators(page = 1, limit = 10) {
   return useQuery({
-    queryKey: queryKeys.operators,
-    queryFn: getAllOperators,
+    queryKey: [...queryKeys.operators, page, limit],
+    queryFn: async () => {
+      const result = await getAllOperators({ page, limit });
+      return toPaginatedResult(result.data, result.meta, limit);
+    },
   });
 }
 
@@ -43,17 +48,17 @@ export const useApproveOperator = () => {
     }) => approve(operatorId, status, rejectReason),
     onMutate: async ({ operatorId, status, rejectReason }) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.operators });
-      const previous = queryClient.getQueryData<OperatorProfile[]>(
-        queryKeys.operators,
-      );
-      queryClient.setQueryData(queryKeys.operators, (oldData: any) => {
-        if (!oldData?.data?.data) return oldData;
+      const previous = queryClient.getQueriesData<
+        PaginatedResult<OperatorProfile>
+      >({ queryKey: queryKeys.operators });
+      queryClient.setQueriesData<PaginatedResult<OperatorProfile>>(
+        { queryKey: queryKeys.operators },
+        (oldData) => {
+          if (!oldData?.data) return oldData;
 
-        return {
-          ...oldData,
-          data: {
-            ...oldData.data,
-            data: oldData.data.data.map((operator: any) =>
+          return {
+            ...oldData,
+            data: oldData.data.map((operator) =>
               operator.id === operatorId
                 ? {
                     ...operator,
@@ -62,17 +67,18 @@ export const useApproveOperator = () => {
                   }
                 : operator,
             ),
-          },
-        };
-      });
+          };
+        },
+      );
       return { previous };
     },
     onSuccess: (result) => {
       toast.success(result.message || "Operator updated");
     },
     onError: (error: unknown, _variables, context) => {
-      if (context?.previous)
-        queryClient.setQueryData(queryKeys.operators, context.previous);
+      context?.previous?.forEach(([key, data]) => {
+        queryClient.setQueryData(key, data);
+      });
       toast.error(extractApiError(error) || "Failed to update operator");
     },
     onSettled: () =>

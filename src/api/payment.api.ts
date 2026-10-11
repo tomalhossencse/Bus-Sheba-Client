@@ -14,9 +14,12 @@ export const createPayment = (
   );
 };
 
-export const getMyPayments = (): Promise<ApiResponse<Payment[]>> => {
+export const getMyPayments = (params?: {
+  page?: number;
+  limit?: number;
+}): Promise<ApiResponse<Payment[]>> => {
   return apiClient<ApiResponse<Payment[]>>("/payment/my", {
     method: "GET",
-    params: { page: 1, limit: 50 },
+    params: { page: 1, limit: 10, ...params },
   });
 };

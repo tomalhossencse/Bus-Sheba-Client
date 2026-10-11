@@ -57,7 +57,8 @@ function typeBadge(type: BusType) {
 }
 
 export default function OperatorBusesPage() {
-  const { data: buses, isLoading } = useMyBuses();
+  const { data, isLoading } = useMyBuses();
+  const buses = data?.data;
   const createBus = useCreateBus();
   const updateStatus = useUpdateBusStatus();
 

@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Pagination } from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -64,9 +65,13 @@ function statusVariant(status: string) {
 }
 
 export default function OperatorTripsPage() {
-  const { data: trips, isLoading } = useMyTrips();
-  const { data: buses } = useMyBuses();
-  const { data: routes } = useRoutes();
+  const [page, setPage] = useState(1);
+  const { data: tripData, isLoading } = useMyTrips({ page });
+  const { data: busData } = useMyBuses();
+  const { data: routeData } = useRoutes(1, 100);
+  const trips = tripData?.data;
+  const buses = busData?.data;
+  const routes = routeData?.data;
   const createTrip = useCreateTrip();
   const cancelTrip = useCancelTrip();
 
@@ -368,6 +373,13 @@ export default function OperatorTripsPage() {
           );
         })}
       </Tabs>
+      {tripData?.meta && (
+        <Pagination
+          page={tripData.meta.page}
+          totalPages={tripData.meta.totalPages}
+          onPageChange={setPage}
+        />
+      )}
     </div>
   );
 }

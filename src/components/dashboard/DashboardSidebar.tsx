@@ -8,8 +8,8 @@ import { toast } from "sonner";
 import { BrandLogo } from "@/components/shared/BrandLogo";
 import { Button } from "@/components/ui/button";
 import { useGetme, useLogout } from "@/hooks";
-import { cn } from "@/lib/utils";
 import { extractApiError } from "@/lib/api";
+import { cn } from "@/lib/utils";
 import { type NavItem, navsByRole } from "@/routes/sidebarNavs";
 
 interface DashboardSidebarProps {
@@ -54,7 +54,7 @@ export function DashboardSidebar({
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r bg-sidebar text-sidebar-foreground transition-transform duration-200 lg:static lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex h-screen w-64 flex-col overflow-hidden border-r bg-sidebar text-sidebar-foreground transition-transform duration-200 lg:translate-x-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -72,7 +72,7 @@ export function DashboardSidebar({
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+        <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain p-3 [scrollbar-width:thin]">
           {navs.map((nav) => {
             const isActive =
               pathname === nav.href ||

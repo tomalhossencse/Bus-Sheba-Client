@@ -1,8 +1,10 @@
 "use client";
 
 import { Wallet } from "lucide-react";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMyPayments } from "@/hooks";
 import { formatDateTime, formatPrice } from "@/utils";
@@ -26,8 +28,9 @@ function statusVariant(status: string) {
 }
 
 export default function PassengerPaymentsPage() {
-  const { data: payments, isLoading } = useMyPayments();
-  console.log("payments", payments);
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useMyPayments(page);
+  const payments = data?.data;
 
   const totalPaid =
     payments
@@ -44,6 +47,13 @@ export default function PassengerPaymentsPage() {
         <div className="rounded-lg bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-700 dark:text-emerald-400">
           Total Paid: {formatPrice(totalPaid)}
         </div>
+        {data?.meta && (
+          <Pagination
+            page={data.meta.page}
+            totalPages={data.meta.totalPages}
+            onPageChange={setPage}
+          />
+        )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

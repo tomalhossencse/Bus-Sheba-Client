@@ -11,12 +11,19 @@ export interface ApiResponse<T> {
   };
 }
 
+export interface PaginationMeta {
+  limit: number;
+  page: number;
+  total: number;
+  totalPages: number;
+}
+
 export interface PaginatedData<T> {
   data: T[];
-  meta: {
-    limit: number;
-    page: number;
-    total: number;
-    totalPages: number;
-  };
+  meta: PaginationMeta;
+}
+
+export interface PaginatedResult<T> {
+  data: T[];
+  meta: PaginationMeta;
 }
