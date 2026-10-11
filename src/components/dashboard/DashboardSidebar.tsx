@@ -74,7 +74,8 @@ export function DashboardSidebar({
         <nav className="flex-1 space-y-1 overflow-y-auto p-3">
           {navs.map((nav) => {
             const isActive =
-              pathname === nav.href || pathname.startsWith(nav.href + "/");
+              pathname === nav.href ||
+              pathname.startsWith(`${nav.href}/dashboard`);
             return (
               <Link
                 key={nav.href}
