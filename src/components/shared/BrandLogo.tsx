@@ -17,7 +17,7 @@ export function BrandLogo({
 }: BrandLogoProps) {
   const content = (
     <>
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-teal-700 to-teal-500 shadow-sm shadow-teal-700/20">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-teal-700 to-teal-500 shadow-sm shadow-teal-700/20">
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
           <Bus className="h-5 w-5" />
         </div>
