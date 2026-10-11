@@ -40,7 +40,7 @@ export const operatorNavs: NavItem[] = [
     href: "/dashboard/operator/tickets/scan",
     icon: Ticket,
   },
-  { label: "Analytics", href: "/dashboard/operator/analytics", icon: Wallet },
+  //   { label: "Analytics", href: "/dashboard/operator/analytics", icon: Wallet },
 ];
 
 export const passengerNavs: NavItem[] = [
