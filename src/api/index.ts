@@ -3,6 +3,7 @@ export * from "./auth.api";
 export * from "./booking.api";
 export * from "./bus.api";
 export * from "./operator.api";
+export * from "./payment.api";
 export * from "./route.api";
 export * from "./routeStop.api";
 export * from "./ticket.api";

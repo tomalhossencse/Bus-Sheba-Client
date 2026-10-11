@@ -1,6 +1,11 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { addRouteStop, deleteRouteStop, updateRouteStop } from "@/api";
+import {
+  addRouteStop,
+  deleteRouteStop,
+  getRouteStops,
+  updateRouteStop,
+} from "@/api";
 import { extractApiError } from "@/lib/api";
 import { queryKeys } from "./auth.hook";
 
@@ -58,5 +63,17 @@ export const useDeleteRouteStop = () => {
     },
     onError: (error: unknown) =>
       toast.error(extractApiError(error) || "Failed to remove stop"),
+  });
+};
+
+export const useRouteStop = (routeId: string) => {
+  return useQuery({
+    queryKey: queryKeys.stops(routeId),
+    queryFn: async () => {
+      const result = await getRouteStops(routeId);
+      return result.data;
+    },
+    enabled: Boolean(routeId),
+    staleTime: 5 * 60 * 1000,
   });
 };

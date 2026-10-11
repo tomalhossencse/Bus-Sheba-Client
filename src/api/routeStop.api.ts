@@ -37,3 +37,9 @@ export const deleteRouteStop = async (
     method: "PATCH",
   });
 };
+
+export const getRouteStops = async (
+  routeId: string,
+): Promise<ApiResponse<RouteStop[]>> => {
+  return apiClient<ApiResponse<RouteStop[]>>(`/route-stop/route/${routeId}`);
+};
