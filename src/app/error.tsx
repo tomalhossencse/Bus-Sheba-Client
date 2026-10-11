@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertTriangle, Check, Copy, Home, RefreshCw } from "lucide-react";
-import { Component, type ErrorInfo, type ReactNode } from "react";
+import React, { Component, type ErrorInfo, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 
 interface ErrorBoundaryProps {
@@ -75,8 +75,7 @@ export class GracefullyDegradingErrorBoundary extends Component<
                   <span className="font-mono text-[10px] uppercase font-bold text-muted-foreground">
                     Developer Error Info
                   </span>
-                  <button
-                    type="button"
+                  <Button
                     onClick={this.handleCopyError}
                     className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors"
                   >
@@ -91,7 +90,7 @@ export class GracefullyDegradingErrorBoundary extends Component<
                         <span>Copy Stack</span>
                       </>
                     )}
-                  </button>
+                  </Button>
                 </div>
                 <p className="line-clamp-3 font-mono text-xs text-destructive">
                   {this.state.error.message}
