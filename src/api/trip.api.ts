@@ -1,6 +1,6 @@
 import apiClient from "@/lib/apiClient";
 import type { ITrip } from "@/lib/types";
-import type { ApiResponse, TripSearchParams } from "@/types";
+import type { ApiResponse, PaginatedData, TripSearchParams } from "@/types";
 
 export const search = async (
   params: TripSearchParams,
@@ -59,5 +59,56 @@ export const getAllTrips = async (params?: {
 }) => {
   return apiClient<ApiResponse<ITrip[]>>("/trip", {
     params: { page: 1, limit: 20, ...params },
+  });
+};
+
+// operator
+export const getMyTrips = async (params?: {
+  page?: number;
+  limit?: number;
+  status?: string;
+}): Promise<ApiResponse<ITrip[]>> => {
+  return apiClient<ApiResponse<ITrip[]>>("/trip/my-trips", {
+    params: { page: 1, limit: 20, ...params },
+  });
+};
+
+export const createTrip = async (payload: {
+  busId: string;
+  routeId: string;
+  travelDate: string;
+  departureTime: string;
+  arrivalTime: string;
+  fare: number;
+}): Promise<ApiResponse<ITrip>> => {
+  return apiClient<ApiResponse<ITrip>>("/trip/create", {
+    method: "POST",
+    body: payload,
+  });
+};
+
+export const updateTrip = async (
+  id: string,
+  payload: Partial<ITrip>,
+): Promise<ApiResponse<ITrip>> => {
+  return apiClient<ApiResponse<ITrip>>(`/trip/update/${id}`, {
+    method: "PUT",
+    body: payload,
+  });
+};
+
+export const cancelTrip = async (id: string): Promise<ApiResponse<ITrip>> => {
+  return apiClient<ApiResponse<ITrip>>(`/trip/cancel/${id}`, {
+    method: "PATCH",
+  });
+};
+
+export const setTripStatus = async (
+  id: string,
+  status: ITrip["status"],
+): Promise<ApiResponse<ITrip>> => {
+  return apiClient<ApiResponse<ITrip>>(`/trip/status/${id}`, {
+    method: "PATCH",
+    body: { status },
   });
 };
