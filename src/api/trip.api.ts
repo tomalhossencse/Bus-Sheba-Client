@@ -1,6 +1,6 @@
 import apiClient from "@/lib/apiClient";
 import type { ITrip } from "@/lib/types";
-import type { ApiResponse, TripSearchParams } from "@/types";
+import type { ApiResponse, PaginatedData, TripSearchParams } from "@/types";
 
 export const search = async (
   params: TripSearchParams,
@@ -48,4 +48,16 @@ export const search = async (
     ...firstSuccessful.value,
     data: uniqueTrips,
   };
+};
+
+export const getAllTrips = async (params?: {
+  source?: string;
+  destination?: string;
+  page?: number;
+  limit?: number;
+  status?: string;
+}) => {
+  return apiClient<ApiResponse<PaginatedData<ITrip>>>("/trip", {
+    params: { page: 1, limit: 20, ...params },
+  });
 };
