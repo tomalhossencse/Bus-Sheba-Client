@@ -28,57 +28,6 @@ export function LoginForm() {
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
 
-  //   const {
-  //     register,
-  //     handleSubmit,
-  //     formState: { errors },
-  //   } = useForm<LoginFormData>({
-  //     resolver: zodResolver(loginSchema),
-  //   });
-
-  //   const onSubmit = async (data: LoginFormData) => {
-  //     setLoading(true);
-  //     setError(null);
-  //     try {
-  //       const result = await loginUser(data);
-  //       if (result.success) {
-  //         toast.success(result.message || "Login successful");
-  //         const profile = await authService.me();
-  //         const role = profile.data?.role;
-  //         const requestedPath = searchParams.get("redirectUrl");
-  //         const destination =
-  //           requestedPath?.startsWith("/") && !requestedPath.startsWith("//")
-  //             ? requestedPath
-  //             : null;
-  //         if (role === "ADMIN" || role === "SUPER_ADMIN") {
-  //           router.replace(
-  //             destination?.startsWith("/dashboard/admin")
-  //               ? destination
-  //               : "/dashboard/admin",
-  //           );
-  //         } else if (role === "OPERATOR") {
-  //           router.replace(
-  //             destination?.startsWith("/dashboard/operator")
-  //               ? destination
-  //               : "/dashboard/operator",
-  //           );
-  //         } else {
-  //           router.replace(
-  //             destination?.startsWith("/dashboard/passenger")
-  //               ? destination
-  //               : "/dashboard/passenger",
-  //           );
-  //         }
-  //       } else {
-  //         setError(result.message || "Invalid credentials");
-  //       }
-  //     } catch (err) {
-  //       setError(extractApiError(err));
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
   const { mutate: login, isPending: loginPending } = useLogin();
 
   const form = useForm({
@@ -196,14 +145,20 @@ export function LoginForm() {
                             autoComplete="off"
                             aria-invalid={isInvalid}
                           />
-                          <Button
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                          <button
+                            className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
                             type="button"
-                            variant="link"
                             onClick={() => setShowPassword(!showPassword)}
+                            aria-label={
+                              showPassword ? "Hide password" : "Show password"
+                            }
                           >
-                            {showPassword ? <EyeClosed /> : <Eye />}
-                          </Button>
+                            {showPassword ? (
+                              <EyeClosed className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </button>
                           {isInvalid && (
                             <FieldError errors={field.state.meta.errors} />
                           )}

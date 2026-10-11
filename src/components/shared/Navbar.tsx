@@ -171,7 +171,9 @@ export function Navbar() {
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/change-password">
+                  <Link
+                    href={`/dashboard/${user.role.toLowerCase()}/change-password`}
+                  >
                     <KeyRound /> Change password
                   </Link>
                 </DropdownMenuItem>
