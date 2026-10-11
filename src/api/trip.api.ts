@@ -1,6 +1,6 @@
 import apiClient from "@/lib/apiClient";
-import type { ITrip } from "@/lib/types";
-import type { ApiResponse, PaginatedData, TripSearchParams } from "@/types";
+import type { ITrip, TripSeat } from "@/lib/types";
+import type { ApiResponse, TripSearchParams } from "@/types";
 
 export const search = async (
   params: TripSearchParams,
@@ -111,4 +111,27 @@ export const setTripStatus = async (
     method: "PATCH",
     body: { status },
   });
+};
+
+export const getTripById = async (id: string): Promise<ApiResponse<ITrip>> => {
+  return apiClient<ApiResponse<ITrip>>(`/trip/${id}`);
+};
+
+export const getTripSeats = async (
+  tripId: string,
+  status?: string,
+): Promise<ApiResponse<TripSeat[]>> => {
+  return apiClient<ApiResponse<TripSeat[]>>(`/trip/${tripId}/seats`, {
+    params: status ? { status } : {},
+  });
+};
+
+export const getAvailableSeats = async (
+  tripId: string,
+): Promise<
+  ApiResponse<{ availableSeats: TripSeat[]; totalAvailable: number }>
+> => {
+  return apiClient<
+    ApiResponse<{ availableSeats: TripSeat[]; totalAvailable: number }>
+  >(`/trip/${tripId}/available-seats`);
 };

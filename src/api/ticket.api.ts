@@ -1,6 +1,14 @@
 import apiClient from "@/lib/apiClient";
-import type { ITicket } from "@/lib/types";
+import type { ITicket, TicketCheckResponse } from "@/lib/types";
 import type { ApiResponse } from "@/types";
+
+export const checkTicket = async (
+  ticketNumber: string,
+): Promise<ApiResponse<TicketCheckResponse>> => {
+  return apiClient<ApiResponse<TicketCheckResponse>>(
+    `/tickets/verify/${encodeURIComponent(ticketNumber)}`,
+  );
+};
 
 export const previewTicketByOperator = async (
   ticketNumber: string,

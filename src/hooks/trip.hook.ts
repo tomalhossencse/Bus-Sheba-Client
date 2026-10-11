@@ -1,8 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { cancelTrip, createTrip, getAllTrips, getMyTrips, search } from "@/api";
-import type { ITrip } from "@/lib/types";
+import {
+  cancelTrip,
+  createTrip,
+  getAllTrips,
+  getMyTrips,
+  getTripById,
+  getTripSeats,
+  search,
+} from "@/api";
 import { extractApiError } from "@/lib/api";
+import type { ITrip } from "@/lib/types";
 import { queryKeys } from "./auth.hook";
 
 export const useTripsSearch = (params: {
@@ -78,5 +86,30 @@ export const useCancelTrip = () => {
       toast.error(extractApiError(error) || "Failed to cancel trip");
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["my-trips"] }),
+  });
+};
+
+export const useTripDetail = (id: string) => {
+  return useQuery({
+    queryKey: queryKeys.trip(id),
+    queryFn: async () => {
+      const result = await getTripById(id);
+      return result.data;
+    },
+    enabled: Boolean(id),
+    staleTime: 30 * 1000,
+  });
+};
+
+export const useTripSeats = (tripId: string) => {
+  return useQuery({
+    queryKey: queryKeys.tripSeats(tripId),
+    queryFn: async () => {
+      const result = await getTripSeats(tripId);
+      return result.data;
+    },
+    enabled: Boolean(tripId),
+    staleTime: 15 * 1000,
+    refetchInterval: 30 * 1000,
   });
 };
