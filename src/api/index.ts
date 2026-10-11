@@ -1,5 +1,6 @@
 export * from "./analytics.api";
 export * from "./auth.api";
+export * from "./booking.api";
 export * from "./bus.api";
 export * from "./operator.api";
 export * from "./route.api";
