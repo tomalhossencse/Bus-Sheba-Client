@@ -31,8 +31,8 @@ const demoAccounts = [
   },
   {
     label: "Operator demo",
-    email: "testeroperator@gmail.com",
-    password: "Tester@operator1",
+    email: "operator@gmail.com",
+    password: "aB@123456",
   },
   {
     label: "Passenger demo",

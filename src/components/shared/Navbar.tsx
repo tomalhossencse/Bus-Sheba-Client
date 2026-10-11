@@ -15,7 +15,7 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -29,10 +29,10 @@ import { getInitials, getProfileImage, UserMenu } from "./UserMenu";
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+  const pathname = usePathname();
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data: user, isLoading: userLoading } = useGetme();
-  console.log("Navbar user:", user);
   const { mutate: logout, isPending: logoutPending } = useLogout();
 
   const profileImage = getProfileImage(user?.image);
@@ -51,6 +51,9 @@ export function Navbar() {
       : user?.role === "OPERATOR"
         ? "/dashboard/operator"
         : "/dashboard/passenger";
+
+  const isActiveLink = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   const handleLogout = () => {
     logout(undefined, {
@@ -82,15 +85,24 @@ export function Navbar() {
         <BrandLogo />
 
         {/* Desktop Nav */}
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-0.5 rounded-xl border bg-muted/40 p-1 md:flex">
           {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-            >
-              {link.label}
-            </Link>
+            <div key={link.href} className="relative">
+              <Link
+                href={link.href}
+                aria-current={isActiveLink(link.href) ? "page" : undefined}
+                className={`relative block rounded-lg px-3 py-1.5 text-sm font-medium transition-all ${
+                  isActiveLink(link.href)
+                    ? "bg-background text-foreground shadow-sm ring-1 ring-border/60"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                }`}
+              >
+                {link.label}
+              </Link>
+              {isActiveLink(link.href) && (
+                <span className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-primary" />
+              )}
+            </div>
           ))}
         </nav>
 
@@ -156,9 +168,17 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="block rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                aria-current={isActiveLink(link.href) ? "page" : undefined}
+                className={`flex items-center justify-between rounded-lg border-l-2 px-3 py-2.5 text-sm font-medium transition-colors ${
+                  isActiveLink(link.href)
+                    ? "border-primary bg-primary/8 text-primary"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                }`}
               >
                 {link.label}
+                {isActiveLink(link.href) && (
+                  <span className="size-1.5 rounded-full bg-primary" />
+                )}
               </Link>
             ))}
             <div className="border-t pt-2 mt-2 flex flex-col gap-2">

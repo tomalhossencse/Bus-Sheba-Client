@@ -13,7 +13,7 @@ shadcn/ui-style components.
 
 | Resource | Link |
 | --- | --- |
-| Live product | [bus-sheba.vercel.app](https://bus-sheba.vercel.app) |
+| Live product | [bd-bus-sheba.vercel.app](https://bd-bus-sheba.vercel.app) |
 | Frontend repository | [tomalhossencse/Bus-Sheba-Client](https://github.com/tomalhossencse/Bus-Sheba-Client) |
 | Backend repository | [tomalhossencse/Bus-Sheba](https://github.com/tomalhossencse/Bus-Sheba) |
 
