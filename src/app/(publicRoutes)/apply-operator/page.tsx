@@ -22,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useOperatorVerifyEmail } from "@/hooks";
+import { extractApiError } from "@/lib/api";
 
 type FormState = {
   name: string;
@@ -84,8 +85,8 @@ export default function ApplyOperatorPage() {
       toast.success(result.message || "Application submitted");
       setSubmittedEmail(form.email);
       setSubmitted(true);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to submit application");
+    } catch (error: unknown) {
+      toast.error(extractApiError(error) || "Failed to submit application");
     } finally {
       setLoading(false);
     }
@@ -104,7 +105,7 @@ export default function ApplyOperatorPage() {
         window.location.href = "/login";
       },
       onError: (error) => {
-        toast.error(error.message || "Failed to verify email");
+        toast.error(extractApiError(error) || "Failed to verify email");
       },
     });
   };

@@ -9,6 +9,7 @@ import { BrandLogo } from "@/components/shared/BrandLogo";
 import { Button } from "@/components/ui/button";
 import { useGetme, useLogout } from "@/hooks";
 import { cn } from "@/lib/utils";
+import { extractApiError } from "@/lib/api";
 import { type NavItem, navsByRole } from "@/routes/sidebarNavs";
 
 interface DashboardSidebarProps {
@@ -117,7 +118,7 @@ export function DashboardSidebar({
                   queryClient.removeQueries({ queryKey: ["user"] });
                 },
                 onError: (error) => {
-                  toast.error(error.message || "Logged out failed");
+                  toast.error(extractApiError(error) || "Logged out failed");
                 },
               });
             }}

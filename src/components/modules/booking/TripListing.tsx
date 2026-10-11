@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTripsSearch } from "@/hooks";
+import { extractApiError } from "@/lib/api";
 import type { BusType } from "@/lib/types";
 import { formatPrice, formatTime } from "@/utils";
 
@@ -231,7 +232,7 @@ export function TripListing() {
         <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-8 text-center">
           <p className="text-destructive">
             Failed to load trips:{" "}
-            {error instanceof Error ? error.message : "Please try again"}
+            {extractApiError(error)}
           </p>
         </div>
       )}

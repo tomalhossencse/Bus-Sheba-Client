@@ -20,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRegister } from "@/hooks/auth.hook";
+import { extractApiError } from "@/lib/api";
 import {
   registerSchema,
   verifyEmailSchema,
@@ -64,8 +65,8 @@ export function RegisterForm() {
       } else {
         setError(result.message || "Registration failed");
       }
-    } catch (err: any) {
-      setError("Something went wrong. Please try again.");
+    } catch (err: unknown) {
+      setError(extractApiError(err));
     } finally {
       setLoading(false);
     }
@@ -85,8 +86,8 @@ export function RegisterForm() {
       } else {
         setError(result.message || "Invalid OTP");
       }
-    } catch (err: any) {
-      setError("Something went wrong. Please try again.");
+    } catch (err: unknown) {
+      setError(extractApiError(err));
     } finally {
       setLoading(false);
     }

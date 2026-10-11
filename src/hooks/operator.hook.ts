@@ -7,6 +7,7 @@ import {
   OperatorVerifyEmail,
 } from "@/api/operator.api";
 import type { OperatorProfile } from "@/lib/types";
+import { extractApiError } from "@/lib/api";
 import { queryKeys } from "./auth.hook";
 
 export function useApplyOperator() {
@@ -72,6 +73,7 @@ export const useApproveOperator = () => {
     onError: (error: unknown, _variables, context) => {
       if (context?.previous)
         queryClient.setQueryData(queryKeys.operators, context.previous);
+      toast.error(extractApiError(error) || "Failed to update operator");
     },
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: queryKeys.operators }),

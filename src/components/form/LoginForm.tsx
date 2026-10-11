@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLogin } from "@/hooks";
+import { extractApiError } from "@/lib/api";
 import type { UserRole } from "@/types";
 import { loginZodSchema } from "@/validation";
 import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
@@ -114,8 +115,9 @@ export function LoginForm() {
           router.replace(redirectTo);
         },
         onError: (err) => {
-          console.log(err);
-          toast.error(err.message || "Login failed. Please try again.");
+          toast.error(
+            extractApiError(err) || "Login failed. Please try again.",
+          );
         },
       });
     },

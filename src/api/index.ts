@@ -5,4 +5,5 @@ export * from "./bus.api";
 export * from "./operator.api";
 export * from "./route.api";
 export * from "./routeStop.api";
+export * from "./ticket.api";
 export * from "./trip.api";

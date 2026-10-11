@@ -30,6 +30,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useGetme, useLogout } from "@/hooks";
+import { extractApiError } from "@/lib/api";
 import { BrandLogo } from "./BrandLogo";
 
 function getInitials(name?: string | null) {
@@ -82,7 +83,7 @@ export function Navbar() {
         queryClient.removeQueries({ queryKey: ["user"] });
       },
       onError: (error) => {
-        toast.error(error.message || "Logged out failed");
+        toast.error(extractApiError(error) || "Logged out failed");
       },
     });
   };

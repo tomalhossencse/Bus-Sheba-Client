@@ -2,6 +2,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useGoogleLogin } from "@/hooks";
+import { extractApiError } from "@/lib/api";
 
 const GoogleLoginButton = () => {
   const router = useRouter();
@@ -19,8 +20,10 @@ const GoogleLoginButton = () => {
           router.push("/");
           toast.success(res.message || "Login successful");
         },
-        onError: (err: any) => {
-          toast.error(err.message || "Google Login failed. Please try again.");
+        onError: (err: unknown) => {
+          toast.error(
+            extractApiError(err) || "Google Login failed. Please try again.",
+          );
         },
       },
     );

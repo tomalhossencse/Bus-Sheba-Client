@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { addRouteStop, deleteRouteStop, updateRouteStop } from "@/api";
+import { extractApiError } from "@/lib/api";
 import { queryKeys } from "./auth.hook";
 
 export const useCreateRouteStop = () => {
@@ -21,7 +22,7 @@ export const useCreateRouteStop = () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.routes });
     },
     onError: (error: unknown) =>
-      toast.error((error as Error).message || "Failed to add stop"),
+      toast.error(extractApiError(error) || "Failed to add stop"),
   });
 };
 
@@ -43,7 +44,7 @@ export const useUpdateRouteStop = () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.routes });
     },
     onError: (error: unknown) =>
-      toast.error((error as Error).message || "Failed to update stop"),
+      toast.error(extractApiError(error) || "Failed to update stop"),
   });
 };
 
@@ -56,6 +57,6 @@ export const useDeleteRouteStop = () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.routes });
     },
     onError: (error: unknown) =>
-      toast.error((error as Error).message || "Failed to remove stop"),
+      toast.error(extractApiError(error) || "Failed to remove stop"),
   });
 };

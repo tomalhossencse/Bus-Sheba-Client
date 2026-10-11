@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { cancelTrip, createTrip, getAllTrips, getMyTrips, search } from "@/api";
 import type { ITrip } from "@/lib/types";
+import { extractApiError } from "@/lib/api";
 import { queryKeys } from "./auth.hook";
 
 export const useTripsSearch = (params: {
@@ -47,9 +48,7 @@ export const useCreateTrip = () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.analytics.operator });
     },
     onError: (error: unknown) =>
-      toast.error(
-        error instanceof Error ? error.message : "Failed to create trip",
-      ),
+      toast.error(extractApiError(error) || "Failed to create trip"),
   });
 };
 
@@ -76,7 +75,7 @@ export const useCancelTrip = () => {
       context?.previous?.forEach(([key, data]) => {
         queryClient.setQueryData(key, data);
       });
-      toast.error("Failed to cancel trip");
+      toast.error(extractApiError(error) || "Failed to cancel trip");
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["my-trips"] }),
   });

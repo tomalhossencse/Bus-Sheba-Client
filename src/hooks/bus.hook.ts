@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { createBus, getAllBuses, getMyBuses, setBusStatus } from "@/api";
+import { extractApiError } from "@/lib/api";
 import type { IBus } from "@/lib/types";
 import { queryKeys } from "./auth.hook";
 
@@ -33,7 +34,7 @@ export const useCreateBus = () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.myBuses });
     },
     onError: (error: unknown) =>
-      toast.error((error as Error).message || "Failed to add bus"),
+      toast.error(extractApiError(error) || "Failed to add bus"),
   });
 };
 
@@ -56,7 +57,7 @@ export const useUpdateBusStatus = () => {
     onError: (error: unknown, _variables, context) => {
       if (context?.previous)
         queryClient.setQueryData(queryKeys.myBuses, context.previous);
-      toast.error((error as Error).message || "Failed to update bus");
+      toast.error(extractApiError(error) || "Failed to update bus");
     },
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: queryKeys.myBuses }),
