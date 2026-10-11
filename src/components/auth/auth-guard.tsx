@@ -6,10 +6,9 @@ import { useGetme } from "@/hooks";
 import AuthLoading from "./auth-loading";
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
-  const { data, isPending, isError } = useGetme();
+  const { data: user, isPending, isError } = useGetme();
   const router = useRouter();
   const pathname = usePathname();
-  const user = data?.data;
   const isAuthenticated = !!user;
 
   useEffect(() => {

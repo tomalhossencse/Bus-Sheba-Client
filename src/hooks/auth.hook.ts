@@ -17,7 +17,10 @@ export function useLogin() {
 export function useGetme() {
   return useQuery({
     queryKey: ["user"],
-    queryFn: getMe,
+    queryFn: async () => {
+      const result = await getMe();
+      return result.data;
+    },
     retry: false,
   });
 }

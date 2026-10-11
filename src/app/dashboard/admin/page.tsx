@@ -37,9 +37,8 @@ export default function AdminDashboardPage() {
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {isLoading ? (
-          Array.from({ length: 4 }).map((_, i) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-            <Skeleton key={i} className="h-24" />
+          Array.from({ length: 4 }).map((_) => (
+            <Skeleton key={Math.random()} className="h-24" />
           ))
         ) : (
           <>

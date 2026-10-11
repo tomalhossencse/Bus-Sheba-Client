@@ -1,6 +1,6 @@
 import apiClient from "@/lib/apiClient";
 import type { IRoute } from "@/lib/types";
-import type { ApiResponse } from "@/types";
+import type { ApiResponse, PaginatedData } from "@/types";
 
 export const createRoute = async (payload: {
   name: string;
@@ -35,7 +35,7 @@ export const getAllRoutes = async (params?: {
   page?: number;
   limit?: number;
 }) => {
-  return apiClient<ApiResponse<IRoute[]>>("/route", {
+  return apiClient<ApiResponse<PaginatedData<IRoute>>>("/route", {
     params: { page: 1, limit: 50, ...params },
   });
 };

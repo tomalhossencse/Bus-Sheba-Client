@@ -23,7 +23,7 @@ export function DashboardSidebar({
   const pathname = usePathname();
   const { data: user } = useGetme();
 
-  const role = user.data?.role || "PASSENGER";
+  const role = user?.role || "PASSENGER";
   const navs: NavItem[] =
     navsByRole[role as keyof typeof navsByRole] || navsByRole.PASSENGER;
 
@@ -99,10 +99,10 @@ export function DashboardSidebar({
         <div className="border-t p-3">
           <div className="mb-2 flex items-center gap-3 rounded-md bg-muted/50 p-2">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
-              {user?.data?.name?.charAt(0)?.toUpperCase() || "U"}
+              {user?.name?.charAt(0)?.toUpperCase() || "U"}
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium">{user?.data?.name}</p>
+              <p className="truncate text-sm font-medium">{user?.name}</p>
               <p className="truncate text-xs text-muted-foreground">
                 {user?.role}
               </p>

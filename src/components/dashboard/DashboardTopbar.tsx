@@ -13,6 +13,7 @@ interface DashboardTopbarProps {
 export function DashboardTopbar({ user, onMenuClick }: DashboardTopbarProps) {
   const { theme, setTheme } = useTheme();
 
+  console.log("DashboardTopbar user:", user);
   return (
     <header className="flex h-16 items-center justify-between border-b bg-background px-4 lg:px-6">
       <div className="flex items-center gap-3">

@@ -13,11 +13,10 @@ interface IProps {
 }
 
 const RoleGuard = ({ children, roles }: IProps) => {
-  const { data, isPending, isError } = useGetme();
+  const { data: user, isPending, isError } = useGetme();
   const router = useRouter();
   const pathname = usePathname();
 
-  const user = data?.data;
   const isAuthenticated = !!user;
   const isAuthorized = isAuthenticated && roles.includes(user.role);
 

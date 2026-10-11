@@ -1,7 +1,6 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { log } from "console";
 import {
   BriefcaseBusiness,
   KeyRound,
@@ -54,9 +53,10 @@ export function Navbar() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data: user, isLoading: userLoading } = useGetme();
+  console.log("Navbar user:", user);
   const { mutate: logout, isPending: logoutPending } = useLogout();
 
-  const profileImage = getProfileImage(user?.data?.image);
+  const profileImage = getProfileImage(user?.image);
 
   const navLinks = [
     { label: "Home", href: "/" },
@@ -68,9 +68,9 @@ export function Navbar() {
   ];
 
   const dashboardHref =
-    user?.data?.role === "ADMIN"
+    user?.role === "ADMIN"
       ? "/dashboard/admin"
-      : user?.data?.role === "OPERATOR"
+      : user?.role === "OPERATOR"
         ? "/dashboard/operator"
         : "/dashboard/passenger";
 
@@ -129,7 +129,7 @@ export function Navbar() {
             <span className="sr-only">Toggle theme</span>
           </Button>
 
-          {user?.data ? (
+          {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -139,10 +139,10 @@ export function Navbar() {
                 >
                   <Avatar>
                     {profileImage ? (
-                      <AvatarImage src={profileImage} alt={user.data.name} />
+                      <AvatarImage src={profileImage} alt={user.name} />
                     ) : null}
                     <AvatarFallback className="relative z-0">
-                      {getInitials(user.data.name)}
+                      {getInitials(user.name)}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
@@ -150,10 +150,10 @@ export function Navbar() {
               <DropdownMenuContent align="end" className="w-64">
                 <DropdownMenuLabel className="flex flex-col items-start gap-0.5">
                   <span className="max-w-full truncate font-semibold">
-                    {user.data.name}
+                    {user.name}
                   </span>
                   <span className="max-w-full truncate text-xs font-normal text-muted-foreground">
-                    {user.data.email}
+                    {user.email}
                   </span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -162,7 +162,7 @@ export function Navbar() {
                     <LayoutDashboard /> Dashboard
                   </Link>
                 </DropdownMenuItem>
-                {user.data?.role === "PASSENGER" && (
+                {user.role === "PASSENGER" && (
                   <DropdownMenuItem asChild>
                     <Link href="/dashboard/passenger/bookings">
                       <Ticket /> My bookings
@@ -174,7 +174,7 @@ export function Navbar() {
                     <KeyRound /> Change password
                   </Link>
                 </DropdownMenuItem>
-                {user.data?.role === "PASSENGER" && (
+                {user.role === "PASSENGER" && (
                   <DropdownMenuItem asChild>
                     <Link href="/apply-operator">
                       <BriefcaseBusiness /> Apply as operator

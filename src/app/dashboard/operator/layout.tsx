@@ -1,8 +1,14 @@
-export default function layout({ children }: { children: React.ReactNode }) {
+import RoleGuard from "@/components/auth/role-guard";
+import { DashboardShell } from "@/components/dashboard/DashboardShell";
+
+export default async function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div>
-      Operator Dashboard layout
-      {children}
-    </div>
+    <RoleGuard roles={["OPERATOR"]}>
+      <DashboardShell>{children}</DashboardShell>
+    </RoleGuard>
   );
 }

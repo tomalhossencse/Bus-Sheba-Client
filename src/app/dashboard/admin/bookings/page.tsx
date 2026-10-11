@@ -18,14 +18,14 @@ import { formatDateTime, formatPrice } from "@/utils";
 function statusVariant(status: string) {
   switch (status) {
     case "CONFIRMED":
-      return "success";
+      return "default";
     case "COMPLETED":
       return "default";
     case "CANCELLED":
     case "EXPIRED":
       return "destructive";
     case "PENDING":
-      return "warning";
+      return "secondary";
     default:
       return "secondary";
   }

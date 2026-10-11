@@ -1,17 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import { useGetme } from "@/hooks";
 import type { UserProfile } from "@/lib/types";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { DashboardTopbar } from "./DashboardTopbar";
 
 interface DashboardShellProps {
-  user?: UserProfile;
   children: React.ReactNode;
 }
 
-export function DashboardShell({ user, children }: DashboardShellProps) {
+export function DashboardShell({ children }: DashboardShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const { data: user } = useGetme();
 
   return (
     <div className="flex min-h-screen">

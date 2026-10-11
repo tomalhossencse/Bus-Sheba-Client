@@ -1,4 +1,5 @@
 import apiClient from "@/lib/apiClient";
+import type { ApiResponse, UserProfile } from "@/lib/types";
 import type {
   LoginPayload,
   RegisterPayload,
@@ -9,7 +10,7 @@ export function login(payload: LoginPayload) {
   return apiClient("/auth/login", { method: "POST", body: payload });
 }
 
-export function getMe() {
+export function getMe(): Promise<ApiResponse<UserProfile>> {
   return apiClient("/auth/me");
 }
 
