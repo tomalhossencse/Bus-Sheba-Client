@@ -23,12 +23,65 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Spinner } from "../ui/spinner";
 import GoogleLoginButton from "./GoogleLoginButton";
 
+const demoAccounts = [
+  {
+    label: "Admin demo",
+    email: "testeradmin@gmail.com",
+    password: "Tester@dmin1",
+  },
+  {
+    label: "Operator demo",
+    email: "testeroperator@gmail.com",
+    password: "Tester@operator1",
+  },
+  {
+    label: "Passenger demo",
+    email: "passenger1@gmail.com",
+    password: "Password123!",
+  },
+] as const;
+
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
 
   const { mutate: login, isPending: loginPending } = useLogin();
+
+  const handleLoginSuccess = (res: {
+    message?: string;
+    data?: { user?: { role?: UserRole } };
+  }) => {
+    toast.success(res.message || "Login successful");
+
+    const userRole = res.data?.user?.role;
+
+    let dashboardRoute = "/";
+    if (userRole === "ADMIN" || userRole === "SUPER_ADMIN") {
+      dashboardRoute = "/dashboard/admin";
+    } else if (userRole === "OPERATOR") {
+      dashboardRoute = "/dashboard/operator";
+    } else if (userRole === "PASSENGER") {
+      dashboardRoute = "/dashboard/passenger";
+    }
+
+    const redirectTo = searchParams.get("redirectTo") || dashboardRoute;
+    router.replace(redirectTo);
+  };
+
+  const handleLoginError = (error: unknown) => {
+    toast.error(extractApiError(error) || "Login failed. Please try again.");
+  };
+
+  const handleDemoLogin = (email: string, password: string) => {
+    login(
+      { email, password },
+      {
+        onSuccess: handleLoginSuccess,
+        onError: handleLoginError,
+      },
+    );
+  };
 
   const form = useForm({
     defaultValues: {
@@ -45,29 +98,8 @@ export function LoginForm() {
       };
 
       login(loginData, {
-        onSuccess: (res) => {
-          toast.success(res.message || "Login successful");
-
-          const userRole: UserRole = res?.data?.user?.role;
-
-          let dashboardRoute = "/";
-          if (userRole === "ADMIN" || userRole === "SUPER_ADMIN") {
-            dashboardRoute = "/dashboard/admin";
-          } else if (userRole === "OPERATOR") {
-            dashboardRoute = "/dashboard/operator";
-          } else if (userRole === "PASSENGER") {
-            dashboardRoute = "/dashboard/passenger";
-          }
-
-          const redirectTo = searchParams.get("redirectTo") || dashboardRoute;
-
-          router.replace(redirectTo);
-        },
-        onError: (err) => {
-          toast.error(
-            extractApiError(err) || "Login failed. Please try again.",
-          );
-        },
+        onSuccess: handleLoginSuccess,
+        onError: handleLoginError,
       });
     },
   });
@@ -197,6 +229,26 @@ export function LoginForm() {
         </div>
 
         <GoogleLoginButton />
+
+        <div className="mt-6 space-y-2">
+          <p className="text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Demo accounts
+          </p>
+          <div className="grid gap-2 sm:grid-cols-3">
+            {demoAccounts.map((account) => (
+              <Button
+                key={account.email}
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={loginPending}
+                onClick={() => handleDemoLogin(account.email, account.password)}
+              >
+                {account.label}
+              </Button>
+            ))}
+          </div>
+        </div>
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
           Don't have an account?{" "}

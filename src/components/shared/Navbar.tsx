@@ -21,32 +21,10 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useGetme, useLogout } from "@/hooks";
 import { extractApiError } from "@/lib/api";
 import { BrandLogo } from "./BrandLogo";
-
-function getInitials(name?: string | null) {
-  const words = name?.trim().split(/\s+/).filter(Boolean) || [];
-  if (!words.length) return "US";
-  return words
-    .slice(0, 2)
-    .map((word) => word[0])
-    .join("")
-    .toUpperCase();
-}
-
-function getProfileImage(image?: string | null) {
-  const value = image?.trim();
-  return value && value !== "null" && value !== "undefined" ? value : null;
-}
+import { getInitials, getProfileImage, UserMenu } from "./UserMenu";
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -131,68 +109,7 @@ export function Navbar() {
           </Button>
 
           {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="h-10 w-10 rounded-full p-0"
-                  aria-label="Open user menu"
-                >
-                  <Avatar>
-                    {profileImage ? (
-                      <AvatarImage src={profileImage} alt={user.name} />
-                    ) : null}
-                    <AvatarFallback className="relative z-0">
-                      {getInitials(user.name)}
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64">
-                <DropdownMenuLabel className="flex flex-col items-start gap-0.5">
-                  <span className="max-w-full truncate font-semibold">
-                    {user.name}
-                  </span>
-                  <span className="max-w-full truncate text-xs font-normal text-muted-foreground">
-                    {user.email}
-                  </span>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href={dashboardHref}>
-                    <LayoutDashboard /> Dashboard
-                  </Link>
-                </DropdownMenuItem>
-                {user.role === "PASSENGER" && (
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard/passenger/bookings">
-                      <Ticket /> My bookings
-                    </Link>
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem asChild>
-                  <Link
-                    href={`/dashboard/${user.role.toLowerCase()}/change-password`}
-                  >
-                    <KeyRound /> Change password
-                  </Link>
-                </DropdownMenuItem>
-                {user.role === "PASSENGER" && (
-                  <DropdownMenuItem asChild>
-                    <Link href="/apply-operator">
-                      <BriefcaseBusiness /> Apply as operator
-                    </Link>
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  disabled={logoutPending}
-                  onClick={handleLogout}
-                >
-                  <LogOut /> {logoutPending ? "Logging out..." : "Log out"}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <UserMenu user={user} />
           ) : (
             <>
               <Button
