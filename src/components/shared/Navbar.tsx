@@ -81,12 +81,12 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 min-w-0 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <BrandLogo />
+        <BrandLogo className="min-w-0 shrink" />
 
         {/* Desktop Nav */}
-        <nav className="hidden items-center gap-0.5 rounded-xl border bg-muted/40 p-1 md:flex">
+        <nav className="hidden items-center gap-0.5 rounded-xl border bg-muted/40 p-1 lg:flex">
           {navLinks.map((link) => (
             <div key={link.href} className="relative">
               <Link
@@ -148,8 +148,13 @@ export function Navbar() {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="lg:hidden"
             onClick={() => setMobileOpen(!mobileOpen)}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-navigation"
+            aria-label={
+              mobileOpen ? "Close navigation menu" : "Open navigation menu"
+            }
           >
             {mobileOpen ? (
               <X className="h-5 w-5" />
@@ -162,7 +167,10 @@ export function Navbar() {
 
       {/* Mobile Nav */}
       {mobileOpen && (
-        <div className="border-t bg-background md:hidden">
+        <div
+          id="mobile-navigation"
+          className="max-h-[calc(100dvh-4rem)] overflow-y-auto border-t bg-background lg:hidden"
+        >
           <div className="space-y-1 px-4 pb-4 pt-2">
             {navLinks.map((link) => (
               <Link
@@ -182,7 +190,7 @@ export function Navbar() {
                 )}
               </Link>
             ))}
-            <div className="border-t pt-2 mt-2 flex flex-col gap-2">
+            <div className="mt-2 flex flex-col gap-2 border-t pt-3">
               {user ? (
                 <>
                   <div className="flex items-center gap-3 rounded-lg bg-muted/50 px-3 py-2">
@@ -203,28 +211,48 @@ export function Navbar() {
                       </p>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm" asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    asChild
+                    className="w-full justify-start"
+                  >
                     <Link href={dashboardHref}>
                       <LayoutDashboard className="h-4 w-4" />
                       Dashboard
                     </Link>
                   </Button>
                   {user.role === "PASSENGER" && (
-                    <Button variant="ghost" size="sm" asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      asChild
+                      className="w-full justify-start"
+                    >
                       <Link href="/dashboard/passenger/bookings">
                         <Ticket className="h-4 w-4" />
                         My bookings
                       </Link>
                     </Button>
                   )}
-                  <Button variant="ghost" size="sm" asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    asChild
+                    className="w-full justify-start"
+                  >
                     <Link href="/dashboard/change-password">
                       <KeyRound className="h-4 w-4" />
                       Change password
                     </Link>
                   </Button>
                   {user.role === "PASSENGER" && (
-                    <Button variant="ghost" size="sm" asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      asChild
+                      className="w-full justify-start"
+                    >
                       <Link href="/apply-operator">
                         <BriefcaseBusiness className="h-4 w-4" />
                         Apply as operator
@@ -236,6 +264,7 @@ export function Navbar() {
                     size="sm"
                     disabled={logoutPending}
                     onClick={handleLogout}
+                    className="w-full justify-start"
                   >
                     <LogOut className="h-4 w-4" />
                     {logoutPending ? "Logging out..." : "Log out"}
@@ -243,13 +272,18 @@ export function Navbar() {
                 </>
               ) : (
                 <>
-                  <Button variant="ghost" size="sm" asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    asChild
+                    className="w-full justify-start"
+                  >
                     <Link href="/login">
                       <LogIn className="h-4 w-4" />
                       Login
                     </Link>
                   </Button>
-                  <Button size="sm" asChild>
+                  <Button size="sm" asChild className="w-full justify-start">
                     <Link href="/register">
                       <UserPlus className="h-4 w-4" />
                       Register
@@ -260,6 +294,7 @@ export function Navbar() {
               <Button
                 variant="ghost"
                 size="sm"
+                className="w-full justify-start"
                 onClick={() => {
                   setTheme(theme === "dark" ? "light" : "dark");
                 }}
