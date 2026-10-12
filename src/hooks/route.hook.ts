@@ -57,11 +57,16 @@ export const useUpdateRoute = () => {
   });
 };
 
-export const useRoutes = (page = 1, limit = 10, searchTerm?: string) => {
+export const useRoutes = (
+  page = 1,
+  limit = 10,
+  isActive?: boolean,
+  searchTerm?: string,
+) => {
   return useQuery({
-    queryKey: [...queryKeys.routes, page, limit, searchTerm],
+    queryKey: [...queryKeys.routes, page, limit, searchTerm, isActive],
     queryFn: async () => {
-      const result = await getAllRoutes({ page, limit, searchTerm });
+      const result = await getAllRoutes({ page, limit, isActive, searchTerm });
       return result.data;
     },
   });

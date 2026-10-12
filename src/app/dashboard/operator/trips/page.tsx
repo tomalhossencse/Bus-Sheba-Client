@@ -68,7 +68,7 @@ export default function OperatorTripsPage() {
   const [page, setPage] = useState(1);
   const { data: tripData, isLoading } = useMyTrips({ page });
   const { data: busData } = useMyBuses();
-  const { data: routeData } = useRoutes(1, 100);
+  const { data: routeData } = useRoutes(1, 100, true);
   const trips = tripData?.data;
   const buses = busData?.data;
   const routes = routeData?.data;

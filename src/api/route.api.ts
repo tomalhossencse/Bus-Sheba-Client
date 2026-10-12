@@ -31,9 +31,10 @@ export const updateRoute = async (
 };
 
 export const getAllRoutes = async (params?: {
-  searchTerm?: string;
   page?: number;
   limit?: number;
+  isActive?: boolean;
+  searchTerm?: string;
 }) => {
   return apiClient<ApiResponse<PaginatedData<IRoute>>>("/route", {
     params: { page: 1, limit: 10, ...params },
