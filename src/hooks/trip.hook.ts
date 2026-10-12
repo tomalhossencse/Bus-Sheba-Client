@@ -1,9 +1,4 @@
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   cancelTrip,
@@ -17,6 +12,7 @@ import {
 import { extractApiError } from "@/lib/api";
 import { toPaginatedResult } from "@/lib/pagination";
 import type { ITrip } from "@/lib/types";
+import type { PaginatedResult } from "@/types";
 import { queryKeys } from "./auth.hook";
 
 export const useTripsSearch = (params: {
@@ -78,13 +74,20 @@ export const useCancelTrip = () => {
     mutationFn: (id: string) => cancelTrip(id),
     onMutate: async (id) => {
       await queryClient.cancelQueries({ queryKey: ["my-trips"] });
-      const previous = queryClient.getQueriesData<ITrip[]>({
+      const previous = queryClient.getQueriesData<PaginatedResult<ITrip>>({
         queryKey: ["my-trips"],
       });
-      queryClient.setQueriesData<ITrip[]>({ queryKey: ["my-trips"] }, (trips) =>
-        trips?.map((trip) =>
-          trip.id === id ? { ...trip, status: "CANCELLED" } : trip,
-        ),
+      queryClient.setQueriesData<PaginatedResult<ITrip>>(
+        { queryKey: ["my-trips"] },
+        (result) =>
+          result
+            ? {
+                ...result,
+                data: result.data.map((trip) =>
+                  trip.id === id ? { ...trip, status: "CANCELLED" } : trip,
+                ),
+              }
+            : result,
       );
       return { previous };
     },

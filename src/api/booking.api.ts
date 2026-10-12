@@ -1,5 +1,5 @@
 import apiClient from "@/lib/apiClient";
-import type { IBooking } from "@/lib/types";
+import type { BookingStatus, IBooking } from "@/lib/types";
 import type { ApiResponse } from "@/types/api.type";
 
 export interface CreateBookingPayload {
@@ -29,7 +29,7 @@ export const createBooking = async (
 };
 
 export const getMyBookings = async (params?: {
-  status?: string;
+  status?: BookingStatus;
   page?: number;
   limit?: number;
 }): Promise<ApiResponse<IBooking[]>> => {

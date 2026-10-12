@@ -26,6 +26,7 @@ export function Footer() {
               {[
                 { label: "Home", href: "/" },
                 { label: "Search Buses", href: "/search" },
+                { label: "Upcoming Trips", href: "/trips" },
                 { label: "Routes", href: "/routes" },
                 { label: "Contact Us", href: "/contact" },
               ].map((link) => (

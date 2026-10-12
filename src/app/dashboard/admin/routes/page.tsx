@@ -185,12 +185,18 @@ export default function AdminRoutesPage() {
           );
         })}
       </Tabs>
-      {data?.meta && (
-        <Pagination
-          page={data.meta.page}
-          totalPages={data.meta.totalPages}
-          onPageChange={setPage}
-        />
+      {data?.meta && data.meta.totalPages > 1 && (
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-xs text-muted-foreground">
+            Showing page {data.meta.page} of {data.meta.totalPages} (
+            {data.meta.total} total routes)
+          </p>
+          <Pagination
+            page={data.meta.page}
+            totalPages={data.meta.totalPages}
+            onPageChange={setPage}
+          />
+        </div>
       )}
     </div>
   );

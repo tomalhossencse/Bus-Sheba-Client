@@ -40,6 +40,7 @@ export function Navbar() {
   const navLinks = [
     { label: "Home", href: "/" },
     { label: "Routes", href: "/routes" },
+    { label: "Upcoming Trips", href: "/trips" },
     { label: "Search", href: "/search" },
     { label: "Become an Operator", href: "/apply-operator" },
     { label: "Scan Ticket", href: "/tickets/scan" },

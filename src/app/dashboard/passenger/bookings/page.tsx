@@ -16,7 +16,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useCreatePayment, useMyBookings } from "@/hooks";
+import { useBookingCounts, useCreatePayment, useMyBookings } from "@/hooks";
 import { formatDate, formatPrice, formatTime } from "@/utils";
 
 const FILTERS = [
@@ -51,6 +51,7 @@ export default function PassengerBookingsPage() {
     filter === "all" ? undefined : filter,
     page,
   );
+  const bookingCounts = useBookingCounts();
   const bookings = data?.data;
   const createPayment = useCreatePayment();
   const status = searchParams.get("status");
@@ -162,10 +163,15 @@ export default function PassengerBookingsPage() {
       )}
 
       <Tabs value={filter} onValueChange={handleFilterChange}>
-        <TabsList>
+        <TabsList className="max-w-full gap-1 overflow-x-auto">
           {FILTERS.map((f) => (
-            <TabsTrigger key={f} value={f}>
-              {f === "all" ? "All" : f.charAt(0) + f.slice(1).toLowerCase()}
+            <TabsTrigger key={f} value={f} className="shrink-0">
+              {f === "all"
+                ? "All bookings"
+                : f.charAt(0) + f.slice(1).toLowerCase()}
+              <span className="rounded-full bg-muted px-1.5 py-0.5 text-[11px] font-semibold leading-none text-muted-foreground">
+                {bookingCounts[f] ?? "..."}
+              </span>
             </TabsTrigger>
           ))}
         </TabsList>
@@ -251,11 +257,17 @@ export default function PassengerBookingsPage() {
       </div>
 
       {data?.meta && data.meta.totalPages > 1 && (
-        <Pagination
-          page={data.meta.page}
-          totalPages={data.meta.totalPages}
-          onPageChange={setPage}
-        />
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-xs text-muted-foreground">
+            Showing page {data.meta.page} of {data.meta.totalPages} (
+            {data.meta.total} total bookings)
+          </p>
+          <Pagination
+            page={data.meta.page}
+            totalPages={data.meta.totalPages}
+            onPageChange={setPage}
+          />
+        </div>
       )}
     </div>
   );

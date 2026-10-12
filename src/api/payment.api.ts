@@ -1,5 +1,5 @@
 import apiClient from "@/lib/apiClient";
-import type { Payment } from "@/lib/types";
+import type { Payment, PaymentStatus } from "@/lib/types";
 import type { ApiResponse } from "@/types/api.type";
 
 export const createPayment = (
@@ -17,6 +17,7 @@ export const createPayment = (
 export const getMyPayments = (params?: {
   page?: number;
   limit?: number;
+  status?: PaymentStatus;
 }): Promise<ApiResponse<Payment[]>> => {
   return apiClient<ApiResponse<Payment[]>>("/payment/my", {
     method: "GET",
