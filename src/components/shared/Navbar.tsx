@@ -247,12 +247,7 @@ export function Navbar() {
                     </Link>
                   </Button>
                   {user.role === "PASSENGER" && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      asChild
-                      className="w-full justify-start"
-                    >
+                    <Button variant="ghost" size="sm" asChild>
                       <Link href="/apply-operator">
                         <BriefcaseBusiness className="h-4 w-4" />
                         Apply as operator
