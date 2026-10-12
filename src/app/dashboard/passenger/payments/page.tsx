@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useMyPayments, usePaymentCounts, usePaymentTotal } from "@/hooks";
+import { useMyPayments, usePaymentCounts } from "@/hooks";
 import type { PaymentStatus } from "@/lib/types";
 import { formatDateTime, formatPrice } from "@/utils";
 
@@ -22,39 +22,6 @@ const FILTERS = [
   "PARTIALLY_REFUNDED",
 ] as const;
 type Filter = (typeof FILTERS)[number];
-
-function filterLabel(filter: Filter) {
-  if (filter === "all") return "All payments";
-
-  return filter
-    .toLowerCase()
-    .replaceAll("_", " ")
-    .replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
-
-function amountLabel(filter: Filter) {
-  if (filter === "all") return "Total payment amount";
-
-  return `${filterLabel(filter)} amount`;
-}
-
-function amountSummaryClass(filter: Filter) {
-  switch (filter) {
-    case "PAID":
-      return "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400";
-    case "PENDING":
-    case "REFUND_PENDING":
-      return "bg-amber-500/10 text-amber-700 dark:text-amber-400";
-    case "FAILED":
-    case "CANCELLED":
-      return "bg-destructive/10 text-destructive";
-    case "REFUNDED":
-    case "PARTIALLY_REFUNDED":
-      return "bg-blue-500/10 text-blue-700 dark:text-blue-400";
-    default:
-      return "bg-muted text-foreground";
-  }
-}
 
 function statusVariant(status: string) {
   switch (status) {
@@ -83,10 +50,12 @@ export default function PassengerPaymentsPage() {
     filter === "all" ? undefined : (filter as PaymentStatus),
   );
   const paymentCounts = usePaymentCounts();
-  const { data: totalAmount, isLoading: isTotalLoading } = usePaymentTotal(
-    filter === "all" ? undefined : (filter as PaymentStatus),
-  );
   const payments = data?.data;
+
+  const totalPaid =
+    payments
+      ?.filter((p) => p.status === "PAID")
+      .reduce((sum, p) => sum + Number(p.amount), 0) || 0;
 
   const handleFilterChange = (value: string) => {
     setFilter(value as Filter);
@@ -100,21 +69,25 @@ export default function PassengerPaymentsPage() {
           <h1 className="font-heading text-2xl font-bold">Payments</h1>
           <p className="text-sm text-muted-foreground">Your payment history</p>
         </div>
-        <div
-          className={`rounded-lg px-4 py-2 text-sm font-semibold ${amountSummaryClass(filter)}`}
-        >
-          {amountLabel(filter)}:{" "}
-          {isTotalLoading ? "..." : formatPrice(totalAmount || 0)}
+        <div className="rounded-lg bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+          Total Paid: {formatPrice(totalPaid)}
         </div>
       </div>
 
       <Tabs value={filter} onValueChange={handleFilterChange}>
-        <TabsList className="max-w-full gap-1 overflow-x-auto">
+        <TabsList className="flex-wrap">
           {FILTERS.map((f) => (
-            <TabsTrigger key={f} value={f} className="shrink-0">
-              {filterLabel(f)}
-              <span className="rounded-full bg-muted px-1.5 py-0.5 text-[11px] font-semibold leading-none text-muted-foreground">
-                {paymentCounts[f] ?? "..."}
+            <TabsTrigger key={f} value={f}>
+              <span>
+                {f === "all"
+                  ? "All"
+                  : f
+                      .toLowerCase()
+                      .replaceAll("_", " ")
+                      .replace(/\b\w/g, (letter) => letter.toUpperCase())}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                ({paymentCounts[f] ?? "—"})
               </span>
             </TabsTrigger>
           ))}

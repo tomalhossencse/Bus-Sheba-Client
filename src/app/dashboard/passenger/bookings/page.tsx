@@ -16,7 +16,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useBookingCounts, useCreatePayment, useMyBookings } from "@/hooks";
+import { useCreatePayment, useMyBookings } from "@/hooks";
 import { formatDate, formatPrice, formatTime } from "@/utils";
 
 const FILTERS = [
@@ -51,7 +51,6 @@ export default function PassengerBookingsPage() {
     filter === "all" ? undefined : filter,
     page,
   );
-  const bookingCounts = useBookingCounts();
   const bookings = data?.data;
   const createPayment = useCreatePayment();
   const status = searchParams.get("status");
@@ -169,9 +168,6 @@ export default function PassengerBookingsPage() {
               {f === "all"
                 ? "All bookings"
                 : f.charAt(0) + f.slice(1).toLowerCase()}
-              <span className="rounded-full bg-muted px-1.5 py-0.5 text-[11px] font-semibold leading-none text-muted-foreground">
-                {bookingCounts[f] ?? "..."}
-              </span>
             </TabsTrigger>
           ))}
         </TabsList>
