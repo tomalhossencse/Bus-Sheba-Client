@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useCreateBooking, useTripDetail, useTripSeats } from "@/hooks";
+import { useTripDetail, useTripSeats } from "@/hooks";
 import type { TripSeat } from "@/lib/types";
 import { formatPrice, formatTime } from "@/utils";
 import { THRASHHOLD } from "@/validation";
@@ -28,7 +28,6 @@ export default function BookingPage() {
   const { data: seats, isLoading: seatsLoading } = useTripSeats(tripId);
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const createBooking = useCreateBooking();
 
   const handleToggle = (tripSeat: TripSeat) => {
     setSelectedIds((prev) => {
@@ -75,8 +74,8 @@ export default function BookingPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-      <Button variant="ghost" size="sm" asChild className="mb-6">
+    <div className="mx-auto w-full max-w-6xl px-3 py-5 sm:px-6 sm:py-8 lg:px-8">
+      <Button variant="ghost" size="sm" asChild className="mb-4 sm:mb-6">
         <Link href="/search">
           <ArrowLeft className="h-4 w-4" />
           Back to Search
@@ -84,71 +83,78 @@ export default function BookingPage() {
       </Button>
 
       {/* Trip summary */}
-      <Card className="mb-8">
-        <CardContent className="p-5">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-4">
+      <Card className="mb-6 overflow-hidden sm:mb-8">
+        <CardContent className="p-4 sm:p-5">
+          <div className="flex min-w-0 flex-col gap-5 md:flex-row md:items-center md:justify-between">
+            <div className="flex min-w-0 items-center gap-3 sm:gap-4">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                 <Bus className="h-6 w-6" />
               </div>
-              <div>
-                <p className="font-semibold">{trip.bus?.name}</p>
+              <div className="min-w-0">
+                <p className="truncate font-semibold">
+                  {trip.bus?.name || "Bus service"}
+                </p>
                 <div className="mt-1 flex flex-wrap items-center gap-2">
                   <Badge variant="secondary">
-                    {trip.bus?.busType?.replace("_", " ")}
+                    {trip.bus?.busType?.replace("_", " ") || "Bus"}
                   </Badge>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="truncate text-xs text-muted-foreground">
                     {trip.bus?.registrationNo}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-6 text-sm">
-              <div>
+            <div className="flex min-w-0 items-center justify-between gap-3 text-sm sm:justify-start sm:gap-6">
+              <div className="min-w-0">
                 <p className="text-lg font-bold">
                   {formatTime(trip.departureTime)}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="max-w-28 truncate text-xs text-muted-foreground sm:max-w-none">
                   {trip.route?.source}
                 </p>
               </div>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <div className="flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
                 <Clock className="h-3.5 w-3.5" />
                 {trip.route?.estimatedMinutes
                   ? `${Math.floor(trip.route.estimatedMinutes / 60)}h ${trip.route.estimatedMinutes % 60}m`
                   : "—"}
               </div>
-              <div>
+              <div className="min-w-0 text-right">
                 <p className="text-lg font-bold">
                   {formatTime(trip.arrivalTime)}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="max-w-28 truncate text-xs text-muted-foreground sm:max-w-none">
                   {trip.route?.destination}
                 </p>
               </div>
             </div>
 
-            <div className="text-right">
-              <p className="font-heading text-2xl font-bold text-primary">
+            <div className="flex items-center justify-between gap-2 border-t pt-3 md:block md:border-t-0 md:pt-0 md:text-right">
+              <span className="text-xs text-muted-foreground sm:hidden">
+                Fare per seat
+              </span>
+              <p className="font-heading text-xl font-bold text-primary sm:text-2xl">
                 {formatPrice(trip.fare)}
               </p>
-              <p className="text-xs text-muted-foreground">per seat</p>
+              <p className="hidden text-xs text-muted-foreground sm:block">
+                per seat
+              </p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <div className="grid gap-8 lg:grid-cols-3">
+      <div className="grid min-w-0 gap-5 sm:gap-8 lg:grid-cols-3">
         {/* Seat map */}
-        <div className="lg:col-span-2">
+        <div className="min-w-0 lg:col-span-2">
           <Card>
-            <CardContent className="p-5 sm:p-6">
-              <div className="mb-4 flex items-center justify-between">
-                <h2 className="font-heading text-lg font-semibold">
+            <CardContent className="p-4 sm:p-6">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+                <h2 className="font-heading text-base font-semibold sm:text-lg">
                   Select Your Seats
                 </h2>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-xs text-muted-foreground sm:text-sm">
                   Selected:{" "}
                   <span className="font-semibold text-foreground">
                     {selectedIds.length}
@@ -178,36 +184,38 @@ export default function BookingPage() {
         </div>
 
         {/* Summary sidebar */}
-        <div className="space-y-4">
-          <Card className="sticky top-24">
-            <CardContent className="p-6">
+        <div className="min-w-0 space-y-4">
+          <Card className="lg:sticky lg:top-24">
+            <CardContent className="p-4 sm:p-6">
               <h3 className="mb-4 font-heading text-lg font-semibold">
                 Booking Summary
               </h3>
 
               <div className="mb-4 space-y-2 border-b pb-4 text-sm">
-                <div className="flex justify-between">
+                <div className="flex items-start justify-between gap-4">
                   <span className="text-muted-foreground">Route</span>
-                  <span className="font-medium">
+                  <span className="max-w-[65%] break-words text-right font-medium">
                     {trip.route?.source} → {trip.route?.destination}
                   </span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex items-start justify-between gap-4">
                   <span className="text-muted-foreground">Bus</span>
-                  <span className="font-medium">{trip.bus?.name}</span>
+                  <span className="max-w-[65%] break-words text-right font-medium">
+                    {trip.bus?.name}
+                  </span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex items-start justify-between gap-4">
                   <span className="text-muted-foreground">Travel Date</span>
-                  <span className="font-medium">
+                  <span className="text-right font-medium">
                     {new Date(trip.travelDate).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                     })}
                   </span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex items-start justify-between gap-4">
                   <span className="text-muted-foreground">Seats</span>
-                  <span className="font-medium">
+                  <span className="max-w-[65%] break-words text-right font-medium">
                     {selectedIds
                       .map(
                         (id) =>

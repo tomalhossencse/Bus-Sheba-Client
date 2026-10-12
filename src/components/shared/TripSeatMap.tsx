@@ -125,8 +125,8 @@ export function TripSeatMap({
         </div>
       </div>
 
-      <div className="mx-auto max-w-full overflow-x-auto overscroll-x-contain rounded-b-[2rem] border bg-muted/10 p-3 pb-4 sm:p-5">
-        <div className="relative mx-auto min-w-92 max-w-92 rounded-b-[1.5rem]">
+      <div className="mx-auto max-w-full overflow-x-auto overscroll-x-contain rounded-b-[2rem] border bg-muted/10 p-2 pb-4 sm:p-5">
+        <div className="relative mx-auto min-w-[21rem] max-w-92 rounded-b-[1.5rem]">
           <span className="pointer-events-none absolute left-0 top-1/2 -translate-x-1/2 -rotate-90 text-[9px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
             Windows
           </span>

@@ -137,8 +137,8 @@ export default function OperatorTripsPage() {
   };
 
   return (
-    <div className="space-y-6 p-4 sm:p-6 lg:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="space-y-5 p-3 sm:space-y-6 sm:p-6 lg:p-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-heading text-2xl font-bold">My Trips</h1>
           <p className="text-sm text-muted-foreground">
@@ -147,12 +147,12 @@ export default function OperatorTripsPage() {
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button>
+            <Button className="w-full sm:w-auto">
               <CalendarPlus className="h-4 w-4" />
               Create Trip
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto p-4 sm:p-6">
             <DialogHeader>
               <DialogTitle>Create New Trip</DialogTitle>
             </DialogHeader>
@@ -218,7 +218,7 @@ export default function OperatorTripsPage() {
                   </p>
                 )}
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">
                   <Label>Departure Time</Label>
                   <Input type="time" {...register("departureTime")} />
@@ -270,10 +270,12 @@ export default function OperatorTripsPage() {
       </div>
 
       <Tabs defaultValue="ALL" className="space-y-4">
-        <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1">
-          <TabsTrigger value="ALL">All ({trips?.length || 0})</TabsTrigger>
+        <TabsList className="flex h-auto max-w-full justify-start gap-1 overflow-x-auto">
+          <TabsTrigger value="ALL" className="shrink-0">
+            All ({trips?.length || 0})
+          </TabsTrigger>
           {tripStatuses.map((status) => (
-            <TabsTrigger key={status} value={status}>
+            <TabsTrigger key={status} value={status} className="shrink-0">
               {status.charAt(0) + status.slice(1).toLowerCase()} (
               {trips?.filter((trip) => trip.status === status).length || 0})
             </TabsTrigger>
@@ -288,9 +290,9 @@ export default function OperatorTripsPage() {
 
           return (
             <TabsContent key={status} value={status}>
-              <Card>
+              <Card className="overflow-hidden">
                 <CardContent className="p-0">
-                  <Table>
+                  <Table className="min-w-[760px]">
                     <TableHeader>
                       <TableRow>
                         <TableHead>Route</TableHead>
@@ -315,10 +317,10 @@ export default function OperatorTripsPage() {
                       ) : filteredTrips?.length ? (
                         filteredTrips.map((trip) => (
                           <TableRow key={trip.id}>
-                            <TableCell className="font-medium">
+                            <TableCell className="max-w-56 truncate font-medium">
                               {trip.route?.source} → {trip.route?.destination}
                             </TableCell>
-                            <TableCell className="text-sm">
+                            <TableCell className="max-w-40 truncate text-sm">
                               {trip.bus?.name}
                             </TableCell>
                             <TableCell className="text-sm">
@@ -338,7 +340,7 @@ export default function OperatorTripsPage() {
                                 {trip.status}
                               </Badge>
                             </TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="bg-card text-right">
                               {(trip.status === "SCHEDULED" ||
                                 trip.status === "BOARDING") && (
                                 <Button
@@ -373,12 +375,18 @@ export default function OperatorTripsPage() {
           );
         })}
       </Tabs>
-      {tripData?.meta && (
-        <Pagination
-          page={tripData.meta.page}
-          totalPages={tripData.meta.totalPages}
-          onPageChange={setPage}
-        />
+      {tripData?.meta && tripData.meta.totalPages > 1 && (
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-xs text-muted-foreground">
+            Showing page {tripData.meta.page} of {tripData.meta.totalPages} (
+            {tripData.meta.total} total trips)
+          </p>
+          <Pagination
+            page={tripData.meta.page}
+            totalPages={tripData.meta.totalPages}
+            onPageChange={setPage}
+          />
+        </div>
       )}
     </div>
   );

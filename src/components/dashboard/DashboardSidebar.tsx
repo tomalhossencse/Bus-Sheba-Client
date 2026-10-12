@@ -54,7 +54,7 @@ export function DashboardSidebar({
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex h-screen w-64 flex-col overflow-hidden border-r bg-sidebar text-sidebar-foreground transition-transform duration-200 lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex h-dvh w-64 flex-col overflow-hidden border-r bg-sidebar text-sidebar-foreground transition-transform duration-200 lg:translate-x-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -97,7 +97,7 @@ export function DashboardSidebar({
         </nav>
 
         {/* User */}
-        <div className="border-t p-3">
+        <div className="shrink-0 border-t bg-sidebar p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <div className="mb-2 flex items-center gap-3 rounded-md bg-muted/50 p-2">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
               {user?.name?.charAt(0)?.toUpperCase() || "U"}
@@ -126,7 +126,7 @@ export function DashboardSidebar({
             <Button
               type="submit"
               variant="ghost"
-              className="w-full justify-start gap-2 text-muted-foreground"
+              className="h-10 w-full justify-start gap-2 text-muted-foreground"
             >
               <LogOut className="h-4 w-4" />
               Logout
