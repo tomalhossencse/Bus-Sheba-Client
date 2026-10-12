@@ -1,25 +1,57 @@
-import { ShieldAlert } from "lucide-react";
+import { ArrowLeft, House, Route, ShieldAlert } from "lucide-react";
 import Link from "next/link";
+import { BrandLogo } from "@/components/shared/BrandLogo";
+import { Button } from "@/components/ui/button";
 
 const AccessDenied = () => {
   return (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
-      <ShieldAlert className="h-12 w-12 text-gray-400" />
-      <h2 className="mt-2 text-lg font-semibold text-gray-900">
-        Access Denied
-      </h2>
-      <p className="mt-1 text-sm text-gray-600">
-        You do not have permission to access this page.
-      </p>
-      <div className="mt-6 flex justify-center">
+    <main className="relative isolate flex min-h-[60vh] items-center justify-center overflow-hidden px-4 py-12 sm:px-6">
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_0%,color-mix(in_oklab,var(--primary)_14%,transparent),transparent_48%)]" />
+      <div className="w-full max-w-lg">
+        <div className="mb-8 flex justify-center">
+          <BrandLogo />
+        </div>
+
+        <div className="rounded-3xl border bg-card/90 p-8 text-center shadow-xl shadow-foreground/5 backdrop-blur-sm sm:p-10">
+          <div className="mx-auto flex size-20 items-center justify-center rounded-3xl bg-destructive/10 text-destructive ring-8 ring-destructive/5">
+            <ShieldAlert className="size-9" strokeWidth={1.8} />
+          </div>
+          <p className="mt-7 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+            Restricted area
+          </p>
+          <h1 className="mt-3 font-heading text-3xl font-bold tracking-tight">
+            Access denied
+          </h1>
+          <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-muted-foreground">
+            This page is reserved for a different account type. If you think
+            this is a mistake, please contact your administrator.
+          </p>
+
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <Button variant="outline" asChild>
+              <Link href="/">
+                <House className="size-4" />
+                Back to home
+              </Link>
+            </Button>
+            <Button asChild>
+              <Link href="/routes">
+                <Route className="size-4" />
+                Browse bus routes
+              </Link>
+            </Button>
+          </div>
+        </div>
+
         <Link
           href="/"
-          className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          className="mx-auto mt-6 flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
-          Go back to home
+          <ArrowLeft className="size-4" />
+          Return to a safe place
         </Link>
       </div>
-    </div>
+    </main>
   );
 };
 

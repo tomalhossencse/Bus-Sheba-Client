@@ -1,40 +1,57 @@
 "use client";
 
-import { AlertTriangle, Home, RefreshCw } from "lucide-react";
+import { ArrowLeft, Compass, Home, SearchX } from "lucide-react";
+import Link from "next/link";
+import { BrandLogo } from "@/components/shared/BrandLogo";
 import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-6 text-center">
-      <div className="mx-auto flex max-w-md flex-col items-center justify-center rounded-2xl border border-border/60 bg-card p-8 shadow-xl">
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-          <AlertTriangle className="h-7 w-7" />
+    <main className="relative isolate flex min-h-screen items-center justify-center overflow-hidden px-6 py-12">
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_15%,color-mix(in_oklab,var(--primary)_14%,transparent),transparent_46%)]" />
+      <div className="w-full max-w-xl text-center">
+        <div className="mb-10 flex justify-center">
+          <BrandLogo />
         </div>
-        <h3 className="font-heading text-xl font-bold tracking-tight text-foreground">
-          Page Not Found
-        </h3>
-        <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-          The page you are looking for does not exist or has been moved.
+
+        <div className="mx-auto flex size-28 items-center justify-center rounded-[2rem] border bg-card shadow-xl shadow-foreground/5">
+          <div className="flex size-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+            <SearchX className="size-8" strokeWidth={1.8} />
+          </div>
+        </div>
+
+        <p className="mt-8 font-mono text-sm font-semibold tracking-[0.28em] text-primary">
+          ERROR 404
         </p>
-        <div className="mt-6 flex w-full flex-col gap-2 sm:flex-row sm:justify-center">
-          <Button
-            onClick={() => window.history.back()}
-            variant="default"
-            className="gap-2"
-          >
-            <RefreshCw className="h-4 w-4" />
-            Go Back
+        <h1 className="mt-3 font-heading text-4xl font-bold tracking-tight sm:text-5xl">
+          This stop doesn&apos;t exist
+        </h1>
+        <p className="mx-auto mt-4 max-w-md text-sm leading-6 text-muted-foreground sm:text-base">
+          The page you&apos;re looking for may have moved, expired, or never
+          existed. Let&apos;s get you back on route.
+        </p>
+
+        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <Button onClick={() => window.history.back()} variant="outline">
+            <ArrowLeft className="size-4" />
+            Go back
           </Button>
-          <Button
-            onClick={() => (window.location.href = "/")}
-            variant="outline"
-            className="gap-2"
-          >
-            <Home className="h-4 w-4" />
-            Back to Home
+          <Button asChild>
+            <Link href="/">
+              <Home className="size-4" />
+              Back to home
+            </Link>
           </Button>
         </div>
+
+        <Link
+          href="/routes"
+          className="mx-auto mt-7 flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <Compass className="size-4" />
+          Explore available routes
+        </Link>
       </div>
-    </div>
+    </main>
   );
 }
