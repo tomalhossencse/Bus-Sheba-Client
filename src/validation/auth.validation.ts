@@ -9,7 +9,7 @@ const passwordSchema = z
   .regex(/[^A-Za-z0-9]/, "Must contain a special character");
 
 export const loginZodSchema = z.object({
-  email: z.email(),
+  email: z.email("Invalid email address"),
   password: passwordSchema,
 });
 
@@ -24,5 +24,21 @@ export const registerSchema = z.object({
 
 export const verifyEmailSchema = z.object({
   email: z.email("Please enter a valid email"),
-  otp: z.string().length(6, "OTP must be exactly 6 digits"),
+  otp: z.string().length(6, "OTP must be exactly 6 characters"),
+});
+
+export const forgetPasswordSchema = z.object({
+  email: z.email("Invalid email address"),
+});
+
+export const resetPasswordSchema = z.object({
+  email: z.email("Invalid email address"),
+  otp: z.string().length(6, "OTP must be exactly 6 characters"),
+  newPassword: passwordSchema,
+});
+
+export const changePasswordSchema = z.object({
+  email: z.email("Invalid email address"),
+  oldPassword: passwordSchema,
+  newPassword: passwordSchema,
 });

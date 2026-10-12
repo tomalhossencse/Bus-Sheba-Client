@@ -119,18 +119,19 @@ export default function OperatorTripsPage() {
 
   const onSubmit = async (values: CreateTripFormValues) => {
     if (!selectedRoute) return;
-    const departure = combineDateTime(values.travelDate, values.departureTime);
-    const arrival = formatISOLocal(
-      new Date(
-        new Date(departure).getTime() + selectedRoute.estimatedMinutes * 60000,
-      ),
+    const departureDate = new Date(
+      combineDateTime(values.travelDate, values.departureTime),
     );
+    const arrivalDate = new Date(
+      departureDate.getTime() + selectedRoute.estimatedMinutes * 60000,
+    );
+
     await createTrip.mutateAsync({
       ...values,
       fare: Number(values.fare),
       travelDate: values.travelDate,
-      departureTime: departure,
-      arrivalTime: arrival,
+      departureTime: departureDate.toISOString(),
+      arrivalTime: arrivalDate.toISOString(),
     });
     setOpen(false);
     reset();

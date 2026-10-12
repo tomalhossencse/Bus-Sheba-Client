@@ -4,8 +4,14 @@ const routeStopFormSchema = z
   .object({
     stopId: z.string().optional(),
     stopName: z.string().min(1, "Stop name is required"),
-    arrivalMinutes: z.number().min(0, "Minutes cannot be negative"),
-    departureMinutes: z.number().min(0, "Minutes cannot be negative"),
+    arrivalMinutes: z
+      .number()
+      .int("Minutes must be a whole number")
+      .min(0, "Minutes cannot be negative"),
+    departureMinutes: z
+      .number()
+      .int("Minutes must be a whole number")
+      .min(0, "Minutes cannot be negative"),
   })
   .refine((d) => d.departureMinutes >= d.arrivalMinutes, {
     message: "Departure cannot be earlier than arrival",
@@ -15,8 +21,8 @@ const routeStopFormSchema = z
 export const createRouteFormSchema = z
   .object({
     name: z.string().trim().min(3, "Route name must be at least 3 characters"),
-    source: z.string().min(1, "Source location is required"),
-    destination: z.string().min(1, "Destination location is required"),
+    source: z.string().trim().min(1, "Source location is required"),
+    destination: z.string().trim().min(1, "Destination location is required"),
     distanceKm: z.coerce.number().min(0.1, "Distance must be greater than 0"),
     estimatedMinutes: z.coerce
       .number()
@@ -24,7 +30,11 @@ export const createRouteFormSchema = z
     routeStops: z.array(routeStopFormSchema),
   })
   .superRefine((data, ctx) => {
-    if (data.source && data.destination && data.source === data.destination) {
+    if (
+      data.source &&
+      data.destination &&
+      data.source.trim().toLowerCase() === data.destination.trim().toLowerCase()
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Source and destination cannot be the same",

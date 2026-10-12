@@ -88,16 +88,9 @@ export function LoginForm() {
       email: "",
       password: "",
     },
-    validators: {
-      onSubmit: loginZodSchema,
-    },
+    validators: { onSubmit: loginZodSchema },
     onSubmit: ({ value }) => {
-      const loginData = {
-        email: value.email,
-        password: value.password,
-      };
-
-      login(loginData, {
+      login(value, {
         onSuccess: handleLoginSuccess,
         onError: handleLoginError,
       });
@@ -111,14 +104,13 @@ export function LoginForm() {
       </CardHeader>
       <CardContent>
         <form
-          onSubmit={(e) => {
-            e.preventDefault();
+          onSubmit={(event) => {
+            event.preventDefault();
             form.handleSubmit();
           }}
           className="space-y-4"
         >
           <FieldGroup>
-            {/* email */}
             <form.Field name="email">
               {(field) => {
                 const isInvalid =
@@ -129,12 +121,14 @@ export function LoginForm() {
                     <Input
                       id={field.name}
                       name={field.name}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
                       placeholder="you@example.com"
                       type="email"
-                      autoComplete="off"
+                      autoComplete="email"
+                      value={field.state.value}
+                      onChange={(event) =>
+                        field.handleChange(event.target.value)
+                      }
+                      onBlur={field.handleBlur}
                       aria-invalid={isInvalid}
                     />
                     {isInvalid && (
@@ -144,9 +138,6 @@ export function LoginForm() {
                 );
               }}
             </form.Field>
-
-            {/* password */}
-
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
@@ -164,17 +155,19 @@ export function LoginForm() {
                     const isInvalid =
                       field.state.meta.isTouched && !field.state.meta.isValid;
                     return (
-                      <Field className="" data-invalid={isInvalid}>
+                      <Field data-invalid={isInvalid}>
                         <div className="relative">
                           <Input
                             id={field.name}
                             name={field.name}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            value={field.state.value}
-                            onBlur={field.handleBlur}
                             placeholder="••••••••"
                             type={showPassword ? "text" : "password"}
-                            autoComplete="off"
+                            autoComplete="current-password"
+                            value={field.state.value}
+                            onChange={(event) =>
+                              field.handleChange(event.target.value)
+                            }
+                            onBlur={field.handleBlur}
                             aria-invalid={isInvalid}
                           />
                           <button

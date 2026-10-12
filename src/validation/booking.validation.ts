@@ -18,12 +18,23 @@ export const bookingPassengerSchema = z.object({
   email: z.email("Please enter a valid email"),
 });
 
-export const createBookingSchema = z.object({
-  tripId: z.string().min(1, "Trip is required"),
-  fromStopId: z.string().min(1, "From stop is required"),
-  toStopId: z.string().min(1, "To stop is required"),
-  tripSeatIds: z.array(z.string().min(1)).min(1, "Select at least one seat"),
-  passengers: z
-    .array(bookingPassengerSchema)
-    .min(1, "At least one passenger is required"),
-});
+export const createBookingSchema = z
+  .object({
+    tripId: z.string().uuid("Invalid trip ID"),
+    fromStopId: z.string().uuid("Invalid boarding stop ID"),
+    toStopId: z.string().uuid("Invalid dropping stop ID"),
+    tripSeatIds: z
+      .array(z.string().uuid("Invalid seat ID"))
+      .min(1, "Select at least one seat"),
+    passengers: z
+      .array(bookingPassengerSchema)
+      .min(1, "At least one passenger is required"),
+  })
+  .refine((data) => data.fromStopId !== data.toStopId, {
+    message: "Source stop and destination stop cannot be the same",
+    path: ["toStopId"],
+  })
+  .refine((data) => data.tripSeatIds.length === data.passengers.length, {
+    message: "Passenger count must match selected seat count",
+    path: ["passengers"],
+  });

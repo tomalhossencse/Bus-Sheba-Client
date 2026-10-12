@@ -42,22 +42,50 @@ export const applyOperatorFormSchema = z.object({
 });
 
 export const createBusFormSchema = z.object({
-  name: z.string().trim().min(2, "Bus name is required"),
-  registrationNo: z.string().trim().min(5, "Enter a valid registration number"),
+  name: z.string().trim().min(1, "Bus name is required"),
+  registrationNo: z
+    .string()
+    .trim()
+    .min(1, "Registration number is required")
+    .regex(
+      /^[A-Z\s-]+-[A-Z]{1,2}-\d{2}-\d{4}$/i,
+      "Use a valid registration format, for example DHAKA-METRO-HA-11-2233",
+    ),
   busType: z.enum(["AC", "NON_AC", "SLEEPER", "SEMI_SLEEPER"]),
-  seatLayout: z.enum(["TWO_BY_TWO", "ONE_BY_TWO", "TWO_BY_ONE"]),
-  totalSeats: z.coerce.number().int().min(1, "Must have at least 1 seat"),
+  seatLayout: z.enum(["TWO_BY_TWO", "ONE_BY_TWO", "TWO_BY_ONE"]).optional(),
+  totalSeats: z.coerce
+    .number()
+    .int("Seat count must be a whole number")
+    .min(10, "Bus capacity must be at least 10 seats")
+    .max(100, "Bus capacity cannot exceed 100 seats"),
 });
 
 export type CreateBusFormValues = z.input<typeof createBusFormSchema>;
 
-export const createTripFormSchema = z.object({
-  busId: z.string().min(1, "Bus is required"),
-  routeId: z.string().min(1, "Route is required"),
-  travelDate: z.string().min(1, "Travel date is required"),
-  departureTime: z.string().min(1, "Departure time is required"),
-  fare: z.coerce.number().min(1, "Fare must be greater than 0"),
-});
+export const createTripFormSchema = z
+  .object({
+    busId: z.string().uuid("Invalid bus ID"),
+    routeId: z.string().uuid("Invalid route ID"),
+    travelDate: z.string().min(1, "Travel date is required"),
+    departureTime: z.string().min(1, "Departure time is required"),
+    fare: z.coerce
+      .number()
+      .positive("Fare must be greater than 0")
+      .max(50000, "Fare amount exceeds maximum limit"),
+  })
+  .refine(
+    (data) => {
+      if (!data.travelDate || !data.departureTime) return true;
+      return (
+        new Date(`${data.travelDate}T${data.departureTime}`).getTime() >
+        Date.now()
+      );
+    },
+    {
+      message: "Departure time must be in the future",
+      path: ["departureTime"],
+    },
+  );
 
 export type CreateTripFormValues = z.input<typeof createTripFormSchema>;
 
