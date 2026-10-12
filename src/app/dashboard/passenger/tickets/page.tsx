@@ -57,13 +57,6 @@ export default function PassengerTicketsPage() {
                       {formatPrice(booking.totalAmount)}
                     </p>
                   </div>
-                  {data?.meta && (
-                    <Pagination
-                      page={data.meta.page}
-                      totalPages={data.meta.totalPages}
-                      onPageChange={setPage}
-                    />
-                  )}
                 </div>
                 <Button asChild>
                   <Link href={`/dashboard/passenger/tickets/${booking.id}`}>
@@ -74,6 +67,16 @@ export default function PassengerTicketsPage() {
               </CardContent>
             </Card>
           ))
+        ) : data?.meta?.total ? (
+          <Card>
+            <CardContent className="p-12 text-center">
+              <Ticket className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
+              <p className="font-medium">No tickets on this page</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Try another page to view your available tickets.
+              </p>
+            </CardContent>
+          </Card>
         ) : (
           <Card>
             <CardContent className="p-12 text-center">
@@ -89,6 +92,20 @@ export default function PassengerTicketsPage() {
           </Card>
         )}
       </div>
+
+      {data?.meta && data.meta.totalPages > 1 && (
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-xs text-muted-foreground">
+            Showing page {data.meta.page} of {data.meta.totalPages} (
+            {data.meta.total} total bookings)
+          </p>
+          <Pagination
+            page={data.meta.page}
+            totalPages={data.meta.totalPages}
+            onPageChange={setPage}
+          />
+        </div>
+      )}
     </div>
   );
 }
