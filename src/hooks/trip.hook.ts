@@ -28,11 +28,16 @@ export const useTripsSearch = (params: {
   });
 };
 
-export const useAllTrips = (page = 1, limit = 20, status?: string) => {
+export const useAllTrips = (
+  page = 1,
+  limit = 20,
+  status?: string,
+  upcoming?: boolean,
+) => {
   return useQuery({
-    queryKey: ["all-trips", page, limit, status],
+    queryKey: ["all-trips", page, limit, status, upcoming],
     queryFn: async () => {
-      const result = await getAllTrips({ page, limit, status });
+      const result = await getAllTrips({ page, limit, status, upcoming });
       return toPaginatedResult(result.data, result.meta, limit);
     },
   });

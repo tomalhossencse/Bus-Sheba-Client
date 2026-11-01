@@ -56,6 +56,7 @@ export const getAllTrips = async (params?: {
   page?: number;
   limit?: number;
   status?: string;
+  upcoming?: boolean;
 }) => {
   return apiClient<ApiResponse<ITrip[]>>("/trip", {
     params: { page: 1, limit: 20, ...params },

@@ -57,7 +57,12 @@ export function UpcomingTripsListing({
   showViewAll = false,
 }: UpcomingTripsListingProps) {
   const [page, setPage] = useState(1);
-  const { data, isLoading, isError } = useAllTrips(page, limit, "SCHEDULED");
+  const { data, isLoading, isError } = useAllTrips(
+    page,
+    limit,
+    "SCHEDULED",
+    true,
+  );
   const trips = data?.data || [];
 
   return (
